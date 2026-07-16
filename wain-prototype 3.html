@@ -1,0 +1,2760 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>وين نوديهم — النموذج الأولي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Tajawal', -apple-system, 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: #0D1F1D;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  direction: rtl;
+}
+
+/* ── PHONE SHELL ── */
+.phone {
+  width: 390px;
+  height: 844px;
+  background: #FAFAF8;
+  border-radius: 50px;
+  box-shadow:
+    0 0 0 10px #1C1917,
+    0 0 0 12px #333,
+    0 40px 80px rgba(0,0,0,.6);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.notch {
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 34px;
+  background: #1C1917;
+  border-radius: 0 0 20px 20px;
+  z-index: 100;
+}
+.status-bar {
+  height: 44px;
+  background: #FAFAF8;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 24px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1C1917;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* ── SCREENS ── */
+.screen {
+  display: none;
+  height: calc(844px - 44px - 64px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+.screen::-webkit-scrollbar { display: none; }
+.screen.active { display: block; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  height: 64px;
+  background: #fff;
+  border-top: 1px solid #E7E5E4;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-bottom: 8px;
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 4px 14px;
+  border-radius: 12px;
+  transition: background .15s;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+.nav-item.active .nav-icon { color: #0D9488; }
+.nav-item.active .nav-label { color: #0D9488; font-weight: 700; }
+.nav-icon { font-size: 20px; color: #A8A29E; }
+.nav-label { font-size: 10px; color: #A8A29E; font-weight: 500; }
+.nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #0D9488;
+  position: absolute;
+  top: 4px;
+}
+
+/* ── TOKENS ── */
+:root {
+  --teal: #0D9488;
+  --teal-dk: #065F46;
+  --teal-lt: #F0FDFA;
+  --teal-bd: #99F6E4;
+  --gold: #B45309;
+  --gold-lt: #FEF3C7;
+  --gold-bd: #FDE68A;
+  --orange: #EA580C;
+  --orange-lt: #FFF7ED;
+  --dark: #1C1917;
+  --mid: #57534E;
+  --soft: #A8A29E;
+  --border: #E7E5E4;
+  --bg: #FAFAF8;
+  --white: #fff;
+}
+
+/* ── UTILITIES ── */
+.px { padding: 0 18px; }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.tag-teal { background: var(--teal-lt); color: var(--teal); }
+.tag-gold { background: var(--gold-lt); color: var(--gold); }
+.tag-orange { background: var(--orange-lt); color: var(--orange); }
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 22px 18px 12px;
+}
+.section-label::before {
+  content: '';
+  width: 3px; height: 18px;
+  background: var(--teal);
+  border-radius: 2px;
+  display: block;
+}
+.section-label span {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--dark);
+}
+
+.divider {
+  height: 8px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 4px 0;
+}
+
+/* ─────────────── SCREEN 1: HOME ─────────────── */
+.hero {
+  background: linear-gradient(160deg, var(--teal) 0%, var(--teal-dk) 100%);
+  padding: 52px 20px 24px;
+  position: relative;
+}
+.hero-greeting {
+  font-size: 12px;
+  color: rgba(255,255,255,.7);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.hero-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.hero-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,.8);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+.hero-ai-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,.15);
+  border: 1.5px solid rgba(255,255,255,.3);
+  border-radius: 12px;
+  padding: 11px 16px;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+  justify-content: center;
+  transition: background .2s;
+}
+.hero-ai-btn:hover { background: rgba(255,255,255,.25); }
+.hero-stats {
+  display: flex;
+  gap: 0;
+  margin-top: 18px;
+  background: rgba(255,255,255,.1);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.stat-item {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  border-left: 1px solid rgba(255,255,255,.12);
+}
+.stat-item:last-child { border-left: none; }
+.stat-n { font-size: 18px; font-weight: 900; color: #fff; }
+.stat-l { font-size: 10px; color: rgba(255,255,255,.65); margin-top: 2px; }
+
+/* Loyalty card strip */
+.loyalty-strip {
+  margin: 14px 16px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.loyalty-strip-left { color: rgba(255,255,255,.75); font-size: 11px; margin-bottom: 3px; }
+.loyalty-strip-pts { font-size: 20px; font-weight: 900; color: #fff; }
+.loyalty-strip-tier { font-size: 11px; color: rgba(255,255,255,.7); margin-top: 2px; }
+.loyalty-arrow {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: #fff;
+}
+
+/* Child profile banner */
+.profile-banner {
+  margin: 0 16px 14px;
+  background: var(--gold-lt);
+  border: 1.5px solid var(--gold-bd);
+  border-radius: 14px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.profile-icon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--teal-lt);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.profile-banner-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.profile-banner-sub   { font-size: 11.5px; color: var(--mid); }
+.profile-banner-arrow { margin-right: auto; color: var(--gold); font-size: 16px; }
+
+/* Location filter */
+.loc-filter { margin:0 16px 12px; background:var(--white); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; align-items:center; gap:10px; }
+.loc-icon { width:36px; height:36px; background:var(--teal-lt); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.loc-city { font-size:13px; font-weight:800; color:var(--dark); margin-bottom:1px; }
+.loc-sub  { font-size:11px; color:var(--soft); }
+.loc-sort { display:flex; gap:5px; }
+.loc-sort-btn { padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; border:1.5px solid var(--border); background:var(--bg); color:var(--mid); cursor:pointer; font-family:inherit; white-space:nowrap; }
+.loc-sort-btn.active { background:var(--teal-lt); color:var(--teal); border-color:var(--teal-bd); }
+
+/* Booking type toggle */
+.booking-type-toggle { display:flex; margin:0 20px 14px; background:var(--bg); border-radius:12px; padding:4px; gap:4px; border:1px solid var(--border); }
+.btt-btn { flex:1; padding:9px; border-radius:9px; border:none; background:none; font-size:12.5px; font-weight:700; color:var(--mid); cursor:pointer; font-family:inherit; transition:all .15s; }
+.btt-btn.active { background:var(--white); color:var(--teal); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+
+/* Group counter */
+.group-fields { padding:0 20px; margin-bottom:12px; }
+.group-counter { display:flex; align-items:center; justify-content:space-between; background:var(--bg); border:1.5px solid var(--border); border-radius:12px; padding:10px 14px; margin-bottom:10px; }
+.gc-label { font-size:13px; font-weight:700; color:var(--dark); }
+.gc-controls { display:flex; align-items:center; gap:12px; }
+.gc-btn { width:32px; height:32px; border-radius:50%; border:1.5px solid var(--teal); background:var(--teal-lt); color:var(--teal); font-size:18px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.gc-val { font-size:16px; font-weight:900; color:var(--dark); min-width:20px; text-align:center; }
+.group-note { background:var(--gold-lt); border:1px solid var(--gold-bd); border-radius:10px; padding:9px 12px; font-size:12px; color:var(--gold); font-weight:600; }
+
+/* Age bar */
+.age-bar {
+  margin: 0 16px 14px;
+  background: var(--white);
+  border-radius: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+}
+.age-bar-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.age-bar-label { font-size: 12.5px; font-weight: 700; color: var(--dark); }
+.age-bar-val   { font-size: 14px; font-weight: 900; color: var(--teal); }
+.age-slider {
+  width: 100%; accent-color: var(--teal);
+  height: 4px; cursor: pointer;
+}
+
+/* Type pills */
+.type-pills {
+  display: flex;
+  gap: 7px;
+  padding: 0 16px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.type-pills::-webkit-scrollbar { display: none; }
+.type-pill {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--mid);
+  font-family: inherit;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.type-pill.active {
+  background: var(--teal);
+  color: #fff;
+  border-color: var(--teal);
+}
+
+/* Activity cards horizontal scroll */
+.cards-scroll {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 4px;
+}
+.cards-scroll::-webkit-scrollbar { display: none; }
+.act-card {
+  flex-shrink: 0;
+  width: 165px;
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform .15s;
+}
+.act-card:active { transform: scale(.97); }
+.act-card-img {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  position: relative;
+  overflow: hidden;
+}
+.act-card-img .img-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+}
+.act-card-img .img-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.35) 100%);
+}
+.act-card-img .img-emoji {
+  position: relative; z-index: 1; font-size: 40px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.3));
+}
+.act-card-dist {
+  position: absolute;
+  top: 8px; left: 8px;
+}
+.act-card-pts {
+  position: absolute;
+  top: 8px; right: 8px;
+}
+.act-card-body { padding: 10px 11px; }
+.act-card-name { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; line-height: 1.3; }
+.act-card-meta { font-size: 11px; color: var(--soft); margin-bottom: 5px; }
+.act-card-price { font-size: 13px; font-weight: 800; color: var(--teal); }
+
+/* Hub 2-col */
+.hub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 16px;
+}
+.hub-block {
+  background: var(--white);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.hub-header {
+  padding: 11px 12px 9px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #fff;
+}
+.hub-header.girl { background: linear-gradient(135deg, #0D9488, #0F766E); }
+.hub-header.youth { background: linear-gradient(135deg, #0D9488, #065F46); }
+.hub-item {
+  padding: 9px 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--dark);
+  font-weight: 600;
+}
+.hub-item:hover { background: var(--bg); }
+.hub-emoji { font-size: 15px; }
+
+/* Occasion row */
+.occ-row {
+  display: flex;
+  gap: 10px;
+  padding: 0 16px;
+}
+.occ-card {
+  flex: 1;
+  border-radius: 14px;
+  padding: 14px;
+  cursor: pointer;
+  border: 1.5px solid;
+}
+.occ-card.grad  { background: var(--teal-lt);  border-color: var(--teal-bd); }
+.occ-card.bday  { background: var(--gold-lt);   border-color: var(--gold-bd); }
+.occ-emoji { font-size: 24px; margin-bottom: 6px; }
+.occ-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.occ-sub   { font-size: 11px; color: var(--mid); }
+
+/* Neighbourhood */
+.hood-list { padding: 0 16px; display: flex; flex-direction: column; gap: 9px; }
+.hood-item {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.hood-icon { font-size: 22px; flex-shrink: 0; }
+.hood-info { flex: 1; }
+.hood-name { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.hood-desc { font-size: 11.5px; color: var(--mid); }
+
+/* Join centers */
+.join-banner {
+  margin: 16px;
+  background: var(--dark);
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.join-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+.join-sub   { font-size: 12px; color: var(--soft); line-height: 1.5; }
+.join-btn {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+}
+
+/* ─────────────── SCREEN 2: DISCOVER ─────────────── */
+.search-bar {
+  margin: 12px 16px;
+  display: flex;
+  align-items: center;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  gap: 10px;
+}
+.search-icon { font-size: 16px; color: var(--soft); }
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: var(--dark);
+  font-family: inherit;
+  background: transparent;
+  direction: rtl;
+}
+.search-input::placeholder { color: var(--soft); }
+
+.filter-row {
+  display: flex;
+  gap: 7px;
+  padding: 0 16px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-chip {
+  flex-shrink: 0;
+  padding: 6px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--mid);
+  font-family: inherit;
+  white-space: nowrap;
+}
+.filter-chip.active {
+  background: var(--teal-lt);
+  color: var(--teal);
+  border-color: var(--teal-bd);
+}
+
+.act-list { padding: 0 16px; display: flex; flex-direction: column; gap: 11px; }
+.act-list-item {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: flex;
+  gap: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.act-list-item:hover { border-color: var(--teal-bd); }
+.act-list-img {
+  width: 90px;
+  background: var(--teal-lt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  flex-shrink: 0;
+}
+.act-list-body { padding: 13px 14px; flex: 1; }
+.act-list-name { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+.act-list-meta { font-size: 11.5px; color: var(--soft); margin-bottom: 6px; }
+.act-list-bottom { display: flex; align-items: center; justify-content: space-between; }
+.act-list-price { font-size: 13.5px; font-weight: 800; color: var(--teal); }
+.act-list-rating { font-size: 11.5px; color: var(--gold); font-weight: 600; }
+
+/* ─────────────── SCREEN 3: MAP ─────────────── */
+.map-container {
+  position: relative;
+  height: 300px;
+  background: linear-gradient(160deg, #E6F7F5, #CCFBF1);
+  overflow: hidden;
+}
+.map-grid {
+  position: absolute;
+  inset: 0;
+  opacity: .2;
+}
+.map-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+.map-pin-bubble {
+  background: var(--white);
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  white-space: nowrap;
+}
+.map-pin-dot {
+  width: 14px; height: 14px;
+  border-radius: 50% 50% 50% 0;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  transform: rotate(-45deg);
+}
+.map-user-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--teal);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 6px rgba(13,148,136,.15);
+}
+.map-city-label {
+  position: absolute;
+  bottom: 12px; right: 12px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 6px 13px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dark);
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+.nearby-list { padding: 0 16px; display: flex; flex-direction: column; gap: 9px; }
+.nearby-item {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.nearby-emoji { font-size: 22px; flex-shrink: 0; width: 40px; height: 40px; background: var(--teal-lt); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.nearby-info { flex: 1; }
+.nearby-name { font-size: 13.5px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.nearby-meta { font-size: 11.5px; color: var(--mid); }
+.nearby-dist { font-size: 12px; font-weight: 700; color: var(--teal); }
+
+/* ─────────────── SCREEN 4: WALLET ─────────────── */
+.wallet-card {
+  margin: 16px;
+  background: linear-gradient(145deg, var(--teal), var(--teal-dk));
+  border-radius: 22px;
+  padding: 22px 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(13,148,136,.3);
+}
+.wallet-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; left: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.07);
+}
+.wallet-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; right: -30px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.05);
+}
+.wc-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; }
+.wc-brand { font-size: 16px; font-weight: 900; color: #fff; }
+.wc-tier { background: rgba(255,255,255,.15); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; color: #fff; }
+.wc-num { font-size: 14px; font-weight: 700; color: rgba(255,255,255,.7); letter-spacing: 3px; font-family: monospace; margin: 18px 0 6px; position: relative; }
+.wc-bottom { display: flex; justify-content: space-between; align-items: flex-end; position: relative; }
+.wc-holder-label { font-size: 10px; color: rgba(255,255,255,.6); margin-bottom: 3px; }
+.wc-holder-name  { font-size: 14px; font-weight: 700; color: #fff; }
+.wc-pts-label { font-size: 10px; color: rgba(255,255,255,.6); margin-bottom: 2px; text-align: left; }
+.wc-pts-val   { font-size: 26px; font-weight: 900; color: #fff; text-align: left; line-height: 1; }
+
+.wallet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0 16px 14px;
+}
+.wallet-mini {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+}
+.wm-icon  { font-size: 22px; margin-bottom: 5px; }
+.wm-label { font-size: 11px; color: var(--soft); margin-bottom: 3px; }
+.wm-val   { font-size: 17px; font-weight: 900; }
+.wm-val.teal { color: var(--teal); }
+.wm-val.gold { color: var(--gold); letter-spacing: 2px; }
+
+/* Tier progress */
+.tier-section { margin: 0 16px 14px; }
+.tier-header { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
+.tier-progress {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+.tier-progress-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.tier-from { font-size: 12.5px; font-weight: 600; color: var(--mid); }
+.tier-to   { font-size: 12.5px; font-weight: 700; color: var(--teal); }
+.tier-bar  { height: 8px; background: var(--bg); border-radius: 99px; overflow: hidden; margin-bottom: 5px; }
+.tier-fill { height: 100%; background: linear-gradient(90deg, var(--teal), #14B8A6); border-radius: 99px; width: 55%; }
+.tier-range { display: flex; justify-content: space-between; font-size: 10px; color: var(--soft); }
+
+.tier-pills { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 16px; }
+.tier-pill {
+  flex: 1;
+  text-align: center;
+  padding: 9px 4px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+}
+.tier-pill.current { background: var(--teal-lt); border-color: var(--teal-bd); }
+.tp-icon  { font-size: 16px; }
+.tp-name  { font-size: 10px; font-weight: 700; color: var(--soft); margin-top: 3px; }
+.tier-pill.current .tp-name { color: var(--teal); }
+
+/* Perks */
+.perks { margin: 0 16px; background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.perk-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.perk-item:last-child { border-bottom: none; }
+.perk-icon { width: 32px; height: 32px; border-radius: 9px; background: var(--teal-lt); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.perk-text { font-size: 13px; font-weight: 600; color: var(--dark); }
+.perk-check { margin-right: auto; color: var(--teal); font-size: 16px; }
+
+/* ─────────────── SCREEN 5: PROFILE ─────────────── */
+.profile-header {
+  background: linear-gradient(160deg, var(--teal), var(--teal-dk));
+  padding: 50px 20px 24px;
+  text-align: center;
+}
+.profile-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 12px;
+  border: 3px solid rgba(255,255,255,.3);
+}
+.profile-name { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 3px; }
+.profile-sub  { font-size: 13px; color: rgba(255,255,255,.7); }
+
+.child-profile-card {
+  margin: 14px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--teal-bd);
+  border-radius: 16px;
+  padding: 16px;
+}
+.cpc-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.cpc-title { font-size: 14px; font-weight: 800; color: var(--dark); }
+.cpc-edit  { font-size: 12px; color: var(--teal); font-weight: 700; cursor: pointer; }
+.cpc-name  { font-size: 18px; font-weight: 900; color: var(--teal); margin-bottom: 6px; }
+.cpc-tags  { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.cpc-tag   { padding: 4px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; background: var(--teal-lt); color: var(--teal); }
+.cpc-suggestion {
+  background: var(--gold-lt);
+  border: 1px solid var(--gold-bd);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.cpc-sug-label { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 5px; }
+.cpc-sug-item  { font-size: 12.5px; color: var(--mid); padding: 3px 0; }
+
+.settings-list { margin: 0 16px; background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.setting-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.setting-item:last-child { border-bottom: none; }
+.setting-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.setting-label { font-size: 13.5px; font-weight: 600; color: var(--dark); flex: 1; }
+.setting-arrow { color: var(--soft); font-size: 14px; }
+
+/* ─────────────── BOOKING SHEET ─────────────── */
+.sheet-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(28,25,23,.5);
+  z-index: 200;
+  align-items: flex-end;
+}
+.sheet-overlay.open { display: flex; }
+.sheet {
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  padding-bottom: 20px;
+  max-height: 92%;
+  overflow-y: auto;
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.sheet-handle {
+  width: 40px; height: 4px;
+  background: var(--border);
+  border-radius: 99px;
+  margin: 12px auto 0;
+}
+.sheet-header {
+  padding: 14px 20px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.sheet-emoji { font-size: 32px; }
+.sheet-title { font-size: 16px; font-weight: 800; color: var(--dark); margin-top: 4px; }
+.sheet-close { font-size: 20px; color: var(--soft); cursor: pointer; background: none; border: none; }
+.sheet-points-badge {
+  margin: 0 20px 14px;
+  background: var(--gold-lt);
+  border: 1px solid var(--gold-bd);
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.session-list { padding: 0 20px; display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+.session-item {
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--dark);
+  transition: all .15s;
+}
+.session-item.selected { background: var(--teal-lt); border-color: var(--teal); color: var(--teal); }
+.field-wrap { padding: 0 20px; margin-bottom: 12px; }
+.field-label { font-size: 12px; font-weight: 700; color: var(--mid); margin-bottom: 6px; }
+.field-input {
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: 11px;
+  border: 1.5px solid var(--border);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  direction: rtl;
+  color: var(--dark);
+  background: var(--bg);
+  transition: border-color .15s;
+}
+.field-input:focus { border-color: var(--teal); }
+.sheet-btn {
+  margin: 4px 20px 0;
+  width: calc(100% - 40px);
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: var(--teal);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+}
+.sheet-btn:disabled { background: var(--border); color: var(--soft); cursor: not-allowed; }
+
+/* Confirmation screen */
+.confirm-screen {
+  text-align: center;
+  padding: 24px 20px;
+}
+.confirm-check { font-size: 56px; margin-bottom: 12px; color: var(--teal); }
+.confirm-title { font-size: 20px; font-weight: 900; color: var(--dark); margin-bottom: 6px; }
+.confirm-sub   { font-size: 13.5px; color: var(--mid); margin-bottom: 18px; }
+.qr-box {
+  background: var(--teal-lt);
+  border: 2px dashed var(--teal-bd);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.qr-code { font-size: 26px; font-weight: 900; color: var(--teal); letter-spacing: 4px; font-family: monospace; }
+.qr-label { font-size: 10.5px; color: var(--soft); margin-top: 4px; }
+.qr-symbol { font-size: 48px; margin: 8px 0; color: var(--teal); opacity: .3; }
+.pts-badge {
+  background: var(--gold-lt);
+  border: 1px solid var(--gold-bd);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+/* ─────────────── AI CHAT SHEET ─────────────── */
+.chat-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(28,25,23,.5);
+  z-index: 200;
+  align-items: flex-end;
+}
+.chat-overlay.open { display: flex; }
+.chat-sheet {
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  height: 88%;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp .25s ease;
+}
+.chat-header {
+  background: var(--teal);
+  border-radius: 24px 24px 0 0;
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.chat-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  color: #fff;
+}
+.chat-name   { font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 1px; }
+.chat-status { font-size: 11px; color: rgba(255,255,255,.7); }
+.chat-close  { font-size: 20px; color: rgba(255,255,255,.8); cursor: pointer; background: none; border: none; }
+.chat-body   { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+.chat-body::-webkit-scrollbar { display: none; }
+.chat-msg {
+  max-width: 82%;
+  padding: 10px 13px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+.chat-msg.ai   { align-self: flex-start; background: var(--white); color: var(--dark); border: 1px solid var(--border); }
+.chat-msg.user { align-self: flex-end; background: var(--teal); color: #fff; }
+.quick-replies {
+  display: flex;
+  gap: 7px;
+  padding: 8px 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+}
+.quick-replies::-webkit-scrollbar { display: none; }
+.qr-btn {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 12px;
+  color: var(--mid);
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+}
+.chat-input {
+  flex: 1;
+  padding: 10px 13px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  direction: rtl;
+  background: var(--bg);
+  color: var(--dark);
+}
+.chat-input:focus { border-color: var(--teal); }
+.chat-send {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: var(--teal);
+  color: #fff;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─────────────── FLOATING AI BTN ─────────────── */
+.fab {
+  position: absolute;
+  bottom: 74px;
+  left: 16px;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #fff;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(13,148,136,.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50;
+  transition: transform .15s;
+}
+.fab:active { transform: scale(.9); }
+
+/* Desktop layout */
+@media(min-width: 900px) {
+  .desktop-wrap {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+    max-width: 960px;
+  }
+  .desktop-info {
+    color: #fff;
+    max-width: 340px;
+  }
+  .desktop-info h1 { font-size: 42px; font-weight: 900; margin-bottom: 16px; line-height: 1.15; }
+  .desktop-info p  { font-size: 15px; opacity: .75; line-height: 1.8; margin-bottom: 28px; }
+  .feature-list { display: flex; flex-direction: column; gap: 12px; }
+  .feature-item { display: flex; gap: 12px; align-items: flex-start; }
+  .feature-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .feature-text { font-size: 13px; opacity: .8; line-height: 1.5; }
+  .feature-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+}
+@media(max-width: 899px) {
+  body { align-items: flex-start; padding: 12px; background: #1C1917; }
+  .desktop-info { display: none; }
+  .phone {
+    width: 100%;
+    max-width: 390px;
+    height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0 auto;
+  }
+  .notch { display: none; }
+}
+
+@keyframes mapPulse {
+  0%,100%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(1.3); opacity:.6; }
+}
+@keyframes dropPin {
+  0%{ transform:translate(-50%,-120%) scale(.6); opacity:0; }
+  70%{ transform:translate(-50%,-95%) scale(1.05); }
+  100%{ transform:translate(-50%,-100%) scale(1); opacity:1; }
+}
+
+/* ─── Meeting Sheet ─── */
+.meet-sheet-overlay {
+  display:none;position:absolute;inset:0;
+  background:rgba(17,24,39,.55);z-index:300;align-items:flex-end;
+}
+.meet-sheet-overlay.open { display:flex; }
+.meet-sheet {
+  background:#fff;border-radius:28px 28px 0 0;width:100%;
+  max-height:90%;overflow-y:auto;
+  animation:sheetUp .3s cubic-bezier(.34,1.56,.64,1);
+}
+.meet-sheet::-webkit-scrollbar{display:none}
+@keyframes sheetUp{ from{transform:translateY(100%)} to{transform:translateY(0)} }
+.ms2-handle{width:36px;height:4px;background:#E5E7EB;border-radius:99px;margin:14px auto 0}
+.ms2-top{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F3F4F6}
+.ms2-title{font-size:18px;font-weight:900;color:#111827}
+.ms2-close{width:32px;height:32px;border-radius:50%;background:#F9FAFB;border:1px solid #E5E7EB;font-size:16px;color:#6B7280;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* Mini map in sheet */
+.ms2-minimap{margin:16px 20px;height:130px;border-radius:16px;overflow:hidden;border:1px solid #E5E7EB;background:#EEF2E8;position:relative}
+
+/* Location opts */
+.ms2-loc-opt{padding:13px 14px;border-radius:14px;border:1.5px solid #E5E7EB;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;margin-bottom:8px}
+.ms2-loc-opt.sel{border-color:#0D9488;background:#F0FDFA}
+.ms2-loc-icon{width:38px;height:38px;border-radius:11px;background:#F9FAFB;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ms2-loc-name{font-size:13.5px;font-weight:700;color:#111827;margin-bottom:2px}
+.ms2-loc-sub{font-size:11.5px;color:#6B7280}
+.ms2-check{width:22px;height:22px;border-radius:50%;background:#0D9488;color:#fff;font-size:12px;font-weight:800;display:none;align-items:center;justify-content:center;margin-right:auto;flex-shrink:0}
+.ms2-loc-opt.sel .ms2-check{display:flex}
+
+/* Friends */
+.ms2-friends{margin:0 20px 14px;background:#F9FAFB;border-radius:14px;padding:14px;border:1px solid #F3F4F6}
+.ms2-friend{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.ms2-friend:last-child{margin-bottom:0}
+.ms2-fav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;background:#F0FDFA;border:2px solid #B2E8E4}
+.ms2-fname{font-size:13px;font-weight:700;color:#111827;flex:1}
+.ms2-eta{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.eta-green{background:#F0FDF4;color:#15803D}
+.eta-yellow{background:#FEFCE8;color:#A16207}
+.eta-gray{background:#F9FAFB;color:#6B7280;border:1px solid #E5E7EB}
+
+.ms2-share{margin:0 20px;width:calc(100% - 40px);padding:14px;border-radius:16px;background:#0D9488;color:#fff;border:none;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.ms2-note{margin:10px 20px 24px;padding:12px 14px;background:#F9FAFB;border-radius:12px;border:1px solid #F3F4F6;font-size:12px;color:#6B7280;line-height:1.65}
+
+</style>
+</head>
+<body>
+<div class="desktop-wrap">
+  <!-- Desktop info panel -->
+  <div class="desktop-info">
+    <div style="font-size:11px;letter-spacing:3px;opacity:.5;margin-bottom:16px;font-weight:700">WAIN NWADIHM · 2026</div>
+    <h1>النموذج الأولي</h1>
+    <p>نموذج تفاعلي كامل يمثّل التجربة الحقيقية لتطبيق وين نوديهم — من اكتشاف الأنشطة إلى الحجز والولاء.</p>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">🏠</div>
+        <div><div class="feature-title">الرئيسية</div><div class="feature-text">اكتشاف أنشطة بحسب العمر، Girl Hub، اليافعين، الحي</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔍</div>
+        <div><div class="feature-title">البحث</div><div class="feature-text">فلترة متقدمة بالنوع والمدينة والتقييم</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📍</div>
+        <div><div class="feature-title">الخريطة</div><div class="feature-text">أقرب الأنشطة لموقعك مرئياً</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">⭐</div>
+        <div><div class="feature-title">المحفظة</div><div class="feature-text">بطاقة الولاء، النقاط، المحفظة، كود الإحالة</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">✦</div>
+        <div><div class="feature-title">ملف الطفل الذكي</div><div class="feature-text">اقتراحات أسبوعية مخصصة تلقائياً</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phone -->
+  <div class="phone" id="phone">
+    <div class="notch"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="position:absolute;left:50%;transform:translateX(-50%);font-size:13px">وين نوديهم</span>
+      <span>●●● 5G</span>
+    </div>
+
+    <!-- ══════════ SCREEN: HOME ══════════ -->
+    <div class="screen active" id="screen-home">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-greeting">مرحباً نورة 👋</div>
+        <div class="hero-title">وين نوديهم<br>اليوم؟</div>
+        <div class="hero-sub">اكتشف أقرب الأنشطة وأفضلها لعائلتك</div>
+        <button class="hero-ai-btn" onclick="openChat()">✦ &nbsp; اسأل المساعد الذكي</button>
+        <div class="hero-stats">
+          <div class="stat-item"><div class="stat-n">150+</div><div class="stat-l">نشاط</div></div>
+          <div class="stat-item"><div class="stat-n">7</div><div class="stat-l">مدن</div></div>
+          <div class="stat-item"><div class="stat-n">5K+</div><div class="stat-l">أسرة</div></div>
+          <div class="stat-item"><div class="stat-n">24h</div><div class="stat-l">دعم</div></div>
+        </div>
+      </div>
+
+      <!-- Loyalty strip -->
+      <div class="loyalty-strip" onclick="goTo('wallet')">
+        <div>
+          <div class="loyalty-strip-left">بطاقة الولاء · مستوى فضي</div>
+          <div class="loyalty-strip-pts">820 نقطة</div>
+          <div class="loyalty-strip-tier">◈ 680 نقطة للمستوى الذهبي ✦</div>
+        </div>
+        <div class="loyalty-arrow">←</div>
+      </div>
+
+      <!-- Child profile -->
+      <div class="profile-banner" onclick="goTo('profile')">
+        <div class="profile-icon">👧</div>
+        <div>
+          <div class="profile-banner-title">✦ ملف سارة — اقتراح الأسبوع</div>
+          <div class="profile-banner-sub">مختبر العلماء — السبت 9ص · 2.8كم منك</div>
+        </div>
+        <div class="profile-banner-arrow">←</div>
+      </div>
+
+      <!-- Location filter -->
+      <div class="loc-filter">
+        <div class="loc-icon">📍</div>
+        <div style="flex:1">
+          <div class="loc-city">الرياض — حي النخيل</div>
+          <div class="loc-sub">يعرض الأقرب إليك أولاً</div>
+        </div>
+        <div class="loc-sort">
+          <button class="loc-sort-btn active" onclick="sortLoc(this,'near')">الأقرب</button>
+          <button class="loc-sort-btn" onclick="sortLoc(this,'rate')">الأعلى</button>
+          <button class="loc-sort-btn" onclick="sortLoc(this,'price')">السعر</button>
+        </div>
+      </div>
+
+      <!-- Age -->
+      <div class="age-bar">
+        <div class="age-bar-head">
+          <span class="age-bar-label">عمر المستفيد</span>
+          <span class="age-bar-val" id="home-age-val">8 سنة</span>
+        </div>
+        <input type="range" min="3" max="24" value="8" class="age-slider"
+          oninput="document.getElementById('home-age-val').textContent=this.value+' سنة'">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--soft);margin-top:4px">
+          <span>3</span><span>أطفال</span><span>يافعون</span><span>شباب</span><span>24</span>
+        </div>
+      </div>
+
+      <!-- Type pills -->
+      <div class="type-pills">
+        <button class="type-pill active" onclick="filterType(this)">✦ الكل</button>
+        <button class="type-pill" onclick="filterType(this)">📖 تعليمي</button>
+        <button class="type-pill" onclick="filterType(this)">🎯 ترفيهي</button>
+        <button class="type-pill" onclick="filterType(this)">⚡ رياضي</button>
+        <button class="type-pill" onclick="filterType(this)">🗺 سياحي</button>
+      </div>
+
+      <!-- Activity cards scroll -->
+      <div class="section-label"><span>الأنشطة القريبة منك</span></div>
+      <div class="cards-scroll">
+        <div class="act-card" onclick="openBooking('⚽','أكاديمية كرة القدم',120,120)">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(180deg,#BAE6FD 0%,#38BDF8 50%,#065F46 100%)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">⚽</span>
+            <span class="act-card-dist tag tag-teal" style="font-size:10px;position:absolute;top:8px;left:8px">📍 2.3كم</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-gold">+120★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">أكاديمية كرة القدم</div>
+            <div class="act-card-meta">👧 6-12 · ⭐ 4.8</div>
+            <div class="act-card-price">120 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('🔬','مختبر العلماء',130,130)">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(180deg,#E0F2FE 0%,#7DD3FC 50%,#0C4A6E 100%)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">🔬</span>
+            <span class="act-card-dist tag tag-teal" style="font-size:10px;position:absolute;top:8px;left:8px">📍 2.8كم</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-gold">+130★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">مختبر العلماء الصغار</div>
+            <div class="act-card-meta">👧 7-12 · ⭐ 4.8</div>
+            <div class="act-card-price">130 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('🤖','نادي الروبوتيكس',175,175)">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(180deg,#EDE9FE 0%,#A78BFA 50%,#1E1B4B 100%)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">🤖</span>
+            <span class="act-card-dist tag tag-teal" style="font-size:10px;position:absolute;top:8px;left:8px">📍 1.7كم</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-gold">+175★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">نادي الروبوتيكس</div>
+            <div class="act-card-meta">👧 9-14 · ⭐ 4.9</div>
+            <div class="act-card-price">175 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('💻','البرمجة بـ Scratch',150,150)">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(180deg,#D1FAE5 0%,#34D399 50%,#0D9488 100%)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">💻</span>
+            <span class="act-card-dist tag tag-teal" style="font-size:10px;position:absolute;top:8px;left:8px">📍 3.5كم</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-gold">+150★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">البرمجة بـ Scratch</div>
+            <div class="act-card-meta">👧 8-14 · ⭐ 4.9</div>
+            <div class="act-card-price">150 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('🎨','ورشة الرسم',90,90)">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(180deg,#FEF3C7 0%,#FCD34D 50%,#7C2D12 100%)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">🎨</span>
+            <span class="act-card-dist tag tag-teal" style="font-size:10px;position:absolute;top:8px;left:8px">📍 1.1كم</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-gold">+90★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">ورشة الرسم</div>
+            <div class="act-card-meta">👧 5-10 · ⭐ 4.7</div>
+            <div class="act-card-price">90 ر.س</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-top:18px"></div>
+
+      <!-- Girl Hub + Youth -->
+      <div class="section-label"><span>Girl Hub · اليافعين</span></div>
+      <div class="hub-grid">
+        <div class="hub-block">
+          <div class="hub-header girl">💕 Girl Hub</div>
+          <div class="hub-item" onclick="openBooking('☕','قهوة نسائية',80,0)"><span class="hub-emoji">☕</span>قهوة نسائية</div>
+          <div class="hub-item" onclick="openBooking('🧘‍♀️','تجربة يوغا',80,0)"><span class="hub-emoji">🧘‍♀️</span>تجربة يوغا</div>
+          <div class="hub-item" onclick="openBooking('💃','رقص شرقي',80,0)"><span class="hub-emoji">💃</span>رقص شرقي</div>
+          <div class="hub-item" onclick="openBooking('🛠','ورش عمل',80,0)"><span class="hub-emoji">🛠</span>ورش عمل</div>
+          <div class="hub-item" onclick="openBooking('🌿','مغامرة البنات',80,0)"><span class="hub-emoji">🌿</span>مغامرة</div>
+        </div>
+        <div class="hub-block">
+          <div class="hub-header youth">🚀 اليافعين</div>
+          <div class="hub-item" onclick="openBooking('♟','نادي شطرنج',100,0)"><span class="hub-emoji">♟</span>شطرنج</div>
+          <div class="hub-item" onclick="openBooking('🎳','بولنج',100,0)"><span class="hub-emoji">🎳</span>بولنج</div>
+          <div class="hub-item" onclick="openBooking('👨‍💻','برمجة',100,0)"><span class="hub-emoji">👨‍💻</span>برمجة</div>
+          <div class="hub-item" onclick="openBooking('🤖','تقنية وذكاء اصطناعي',100,0)"><span class="hub-emoji">🤖</span>تقنية</div>
+          <div class="hub-item" onclick="openBooking('🏔','هايكنج وتخييم',100,0)"><span class="hub-emoji">🏔</span>هايكنج</div>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-top:18px"></div>
+
+      <!-- Occasions -->
+      <div class="section-label"><span>المناسبات الخاصة</span></div>
+      <div class="occ-row">
+        <div class="occ-card grad" onclick="openBooking('🎓','حفلات التخرج',200,0)">
+          <div class="occ-emoji">🎓</div>
+          <div class="occ-title">حفلات التخرج</div>
+          <div class="occ-sub">تنظيم متكامل</div>
+        </div>
+        <div class="occ-card bday" onclick="openBooking('🎂','أعياد الميلاد',200,0)">
+          <div class="occ-emoji">🎂</div>
+          <div class="occ-title">أعياد الميلاد</div>
+          <div class="occ-sub">باقات جاهزة</div>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-top:18px"></div>
+
+      <!-- Neighbourhood -->
+      <div class="section-label"><span>🏘 فعاليات الحي</span></div>
+
+      <!-- Sub-tabs -->
+      <div class="type-pills" style="margin-bottom:12px" id="hood-tabs">
+        <button class="type-pill active" onclick="hoodTab(this,'all')">✦ الكل</button>
+        <button class="type-pill" onclick="hoodTab(this,'events')">📅 الفعاليات</button>
+        <button class="type-pill" onclick="hoodTab(this,'club')">🏠 نادي الحي</button>
+        <button class="type-pill" onclick="hoodTab(this,'activities')">⚡ أنشطة الحي</button>
+      </div>
+
+      <div class="hood-list" id="hood-list">
+        <!-- فعاليات -->
+        <div class="hood-item hood-all hood-events" onclick="openBooking('🛍','سوق الحي الأسبوعي',50,0)">
+          <div class="hood-icon">🛍</div>
+          <div class="hood-info"><div class="hood-name">سوق الحي الأسبوعي</div><div class="hood-desc">بسطات محلية وأكل شعبي</div></div>
+          <span class="tag tag-orange">الجمعة</span>
+        </div>
+        <div class="hood-item hood-all hood-events" onclick="openBooking('🌙','أمسية مجتمعية',50,0)">
+          <div class="hood-icon">🌙</div>
+          <div class="hood-info"><div class="hood-name">أمسية مجتمعية</div><div class="hood-desc">تجمع جيران الحي</div></div>
+          <span class="tag tag-teal">هذا الأسبوع</span>
+        </div>
+        <div class="hood-item hood-all hood-events" onclick="openBooking('🌱','يوم تنظيف الحي',50,0)">
+          <div class="hood-icon">🌱</div>
+          <div class="hood-info"><div class="hood-name">يوم تنظيف الحي</div><div class="hood-desc">مبادرة تطوعية للأهالي</div></div>
+          <span class="tag tag-gold">الشهر القادم</span>
+        </div>
+        <!-- نادي الحي -->
+        <div class="hood-item hood-all hood-club" onclick="openBooking('🏃','نادي الجري الصباحي',60,0)">
+          <div class="hood-icon">🏃</div>
+          <div class="hood-info"><div class="hood-name">نادي الجري الصباحي</div><div class="hood-desc">جولة في حديقة الحي</div></div>
+          <span class="tag tag-teal">كل سبت</span>
+        </div>
+        <div class="hood-item hood-all hood-club" onclick="openBooking('♟','نادي الشطرنج المجتمعي',60,0)">
+          <div class="hood-icon">♟</div>
+          <div class="hood-info"><div class="hood-name">نادي الشطرنج المجتمعي</div><div class="hood-desc">للكبار والصغار — مستويات مختلفة</div></div>
+          <span class="tag tag-gold">الإثنين والأربعاء</span>
+        </div>
+        <div class="hood-item hood-all hood-club" onclick="openBooking('📚','نادي القراءة',60,0)">
+          <div class="hood-icon">📚</div>
+          <div class="hood-info"><div class="hood-name">نادي القراءة</div><div class="hood-desc">تبادل الكتب ونقاش أسبوعي</div></div>
+          <span class="tag tag-teal">كل خميس</span>
+        </div>
+        <!-- أنشطة الحي -->
+        <div class="hood-item hood-all hood-activities" onclick="openBooking('🎨','ورشة فنون الحي',70,0)">
+          <div class="hood-icon">🎨</div>
+          <div class="hood-info"><div class="hood-name">ورشة فنون الحي</div><div class="hood-desc">رسم وحرف يدوية للأطفال</div></div>
+          <span class="tag tag-orange">كل جمعة</span>
+        </div>
+        <div class="hood-item hood-all hood-activities" onclick="openBooking('⚽','ملعب الحي للأطفال',60,0)">
+          <div class="hood-icon">⚽</div>
+          <div class="hood-info"><div class="hood-name">ملعب الحي للأطفال</div><div class="hood-desc">رياضة ومباريات ودية</div></div>
+          <span class="tag tag-teal">يومياً 4م-7م</span>
+        </div>
+        <div class="hood-item hood-all hood-activities" onclick="openBooking('🌿','حديقة الحي المجتمعية',50,0)">
+          <div class="hood-icon">🌿</div>
+          <div class="hood-info"><div class="hood-name">حديقة الحي المجتمعية</div><div class="hood-desc">زراعة وعناية بالنباتات</div></div>
+          <span class="tag tag-gold">كل سبت 8ص</span>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-top:18px"></div>
+
+      <!-- SCHOOL TRIPS -->
+      <div class="section-label"><span>🚌 رحلات مدرسية</span></div>
+      <div class="cards-scroll">
+        <div class="act-card" onclick="openBooking('🚌','رحلة علمية تعليمية',150,150)" style="width:175px">
+          <div class="act-card-img" style="background:#F0FDFA;font-size:34px">🚌</div>
+          <div class="act-card-body">
+            <div class="act-card-name">رحلة علمية تعليمية</div>
+            <div class="act-card-meta">📖 مدارس ابتدائية</div>
+            <div class="act-card-price">من 150 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('🏛','زيارة المتحف الوطني',120,120)" style="width:175px">
+          <div class="act-card-img" style="background:#FEF3C7;font-size:34px">🏛</div>
+          <div class="act-card-body">
+            <div class="act-card-name">زيارة المتحف الوطني</div>
+            <div class="act-card-meta">📖 كل المراحل</div>
+            <div class="act-card-price">من 120 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('🌿','رحلة بيئية طبيعية',180,180)" style="width:175px">
+          <div class="act-card-img" style="background:#F0FDF4;font-size:34px">🌿</div>
+          <div class="act-card-body">
+            <div class="act-card-name">رحلة بيئية طبيعية</div>
+            <div class="act-card-meta">🌱 متوسط وثانوي</div>
+            <div class="act-card-price">من 180 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('🏭','زيارة مصنع تعليمية',140,140)" style="width:175px">
+          <div class="act-card-img" style="background:#FFF7ED;font-size:34px">🏭</div>
+          <div class="act-card-body">
+            <div class="act-card-name">زيارة مصنع تعليمية</div>
+            <div class="act-card-meta">📖 متوسط</div>
+            <div class="act-card-price">من 140 ر.س</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-top:18px"></div>
+
+      <!-- TOURISM -->
+      <div class="section-label"><span>🗺 تجارب سياحية</span></div>
+      <div class="cards-scroll">
+        <div class="act-card" onclick="openBooking('🕌','جولة الدرعية التراثية',200,200)" style="width:175px">
+          <div class="act-card-img" style="background:#FEF3C7;font-size:34px">🕌</div>
+          <div class="act-card-body">
+            <div class="act-card-name">جولة الدرعية التراثية</div>
+            <div class="act-card-meta">📍 الرياض · ⭐ 4.9</div>
+            <div class="act-card-price">من 200 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('🌴','واحة الأحساء',250,250)" style="width:175px">
+          <div class="act-card-img" style="background:#F0FDFA;font-size:34px">🌴</div>
+          <div class="act-card-body">
+            <div class="act-card-name">واحة الأحساء</div>
+            <div class="act-card-meta">📍 المنطقة الشرقية</div>
+            <div class="act-card-price">من 250 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('🏔','رحلة العُلا',350,350)" style="width:175px">
+          <div class="act-card-img" style="background:#F0FDF4;font-size:34px">🏔</div>
+          <div class="act-card-body">
+            <div class="act-card-name">رحلة العُلا الأثرية</div>
+            <div class="act-card-meta">📍 العُلا · ⭐ 5.0</div>
+            <div class="act-card-price">من 350 ر.س</div>
+          </div>
+        </div>
+        <div class="act-card" onclick="openBooking('🌊','كورنيش جدة الليلي',160,160)" style="width:175px">
+          <div class="act-card-img" style="background:#EFF6FF;font-size:34px">🌊</div>
+          <div class="act-card-body">
+            <div class="act-card-name">كورنيش جدة الليلي</div>
+            <div class="act-card-meta">📍 جدة · ⭐ 4.8</div>
+            <div class="act-card-price">من 160 ر.س</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-top:18px"></div>
+
+      <!-- RURAL & CRAFT -->
+      <div class="section-label"><span>🌾 مزارع وتجارب ريفية</span></div>
+
+      <!-- Sub-tabs -->
+      <div class="type-pills" style="margin-bottom:12px" id="rural-tabs">
+        <button class="type-pill active" onclick="ruralTab(this,'all')">✦ الكل</button>
+        <button class="type-pill" onclick="ruralTab(this,'farm')">🌾 مزارع</button>
+        <button class="type-pill" onclick="ruralTab(this,'craft')">🔨 حرف مهنية</button>
+        <button class="type-pill" onclick="ruralTab(this,'museum')">🏛 معالم ومتاحف</button>
+      </div>
+
+      <div class="hood-list" id="rural-list">
+        <!-- مزارع -->
+        <div class="hood-item rural-all rural-farm" onclick="openBooking('🐄','مزرعة الألبان التعليمية',130,130)">
+          <div class="hood-icon">🐄</div>
+          <div class="hood-info"><div class="hood-name">مزرعة الألبان التعليمية</div><div class="hood-desc">تجربة حلب وتغذية الحيوانات</div></div>
+          <span class="tag tag-teal">الرياض</span>
+        </div>
+        <div class="hood-item rural-all rural-farm" onclick="openBooking('🌿','مزرعة عضوية',120,120)">
+          <div class="hood-icon">🌿</div>
+          <div class="hood-info"><div class="hood-name">مزرعة عضوية</div><div class="hood-desc">زراعة الخضروات والعناية بالأرض</div></div>
+          <span class="tag tag-gold">جدة</span>
+        </div>
+        <div class="hood-item rural-all rural-farm" onclick="openBooking('🐝','مزرعة النحل',150,150)">
+          <div class="hood-icon">🐝</div>
+          <div class="hood-info"><div class="hood-name">مزرعة النحل والعسل</div><div class="hood-desc">تجربة استخراج العسل الطبيعي</div></div>
+          <span class="tag tag-orange">الطائف</span>
+        </div>
+        <!-- حرف مهنية -->
+        <div class="hood-item rural-all rural-craft" onclick="openBooking('🏺','ورشة الفخار',140,140)">
+          <div class="hood-icon">🏺</div>
+          <div class="hood-info"><div class="hood-name">ورشة الفخار والخزف</div><div class="hood-desc">تعلم صناعة الإناء من الطين</div></div>
+          <span class="tag tag-teal">الرياض</span>
+        </div>
+        <div class="hood-item rural-all rural-craft" onclick="openBooking('🪡','تطريز وخياطة تراثي',110,110)">
+          <div class="hood-icon">🪡</div>
+          <div class="hood-info"><div class="hood-name">تطريز وخياطة تراثي</div><div class="hood-desc">حرفة يدوية أصيلة مع مدربات</div></div>
+          <span class="tag tag-gold">جدة</span>
+        </div>
+        <div class="hood-item rural-all rural-craft" onclick="openBooking('🪵','نحت الخشب التقليدي',160,160)">
+          <div class="hood-icon">🪵</div>
+          <div class="hood-info"><div class="hood-name">نحت الخشب التقليدي</div><div class="hood-desc">صناعة قطع فنية تراثية</div></div>
+          <span class="tag tag-teal">أبها</span>
+        </div>
+        <div class="hood-item rural-all rural-craft" onclick="openBooking('🍞','مخبز تراثي',90,90)">
+          <div class="hood-icon">🍞</div>
+          <div class="hood-info"><div class="hood-name">مخبز تراثي</div><div class="hood-desc">صناعة الخبز التقليدي والمعجنات</div></div>
+          <span class="tag tag-orange">الرياض</span>
+        </div>
+        <!-- معالم ومتاحف -->
+        <div class="hood-item rural-all rural-museum" onclick="openBooking('🏛','المتحف الوطني السعودي',100,100)">
+          <div class="hood-icon">🏛</div>
+          <div class="hood-info"><div class="hood-name">المتحف الوطني السعودي</div><div class="hood-desc">تاريخ المملكة عبر العصور</div></div>
+          <span class="tag tag-teal">الرياض</span>
+        </div>
+        <div class="hood-item rural-all rural-museum" onclick="openBooking('🕌','قصر المصمك',80,80)">
+          <div class="hood-icon">🕌</div>
+          <div class="hood-info"><div class="hood-name">قصر المصمك</div><div class="hood-desc">رمز التأسيس وذاكرة الرياض</div></div>
+          <span class="tag tag-gold">الرياض</span>
+        </div>
+        <div class="hood-item rural-all rural-museum" onclick="openBooking('🎨','متحف الفن الإسلامي',120,120)">
+          <div class="hood-icon">🎨</div>
+          <div class="hood-info"><div class="hood-name">متحف الفن الإسلامي</div><div class="hood-desc">لوحات وتحف من الحضارة الإسلامية</div></div>
+          <span class="tag tag-orange">جدة</span>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-top:18px"></div>
+
+      <!-- ══ CAMPS ══ -->
+      <div class="section-label"><span>🏕 المخيمات والمعسكرات</span></div>
+
+      <div class="type-pills" style="margin-bottom:12px" id="camp-tabs">
+        <button class="type-pill active" onclick="campTab(this,'all')">✦ الكل</button>
+        <button class="type-pill" onclick="campTab(this,'summer')">☀️ صيفية</button>
+        <button class="type-pill" onclick="campTab(this,'tech')">💻 تقنية</button>
+        <button class="type-pill" onclick="campTab(this,'nature')">🌿 طبيعة</button>
+        <button class="type-pill" onclick="campTab(this,'sport')">⚡ رياضية</button>
+      </div>
+
+      <div class="cards-scroll" id="camp-cards">
+        <!-- صيفية -->
+        <div class="act-card camp-all camp-summer" onclick="openBooking('🏕','مخيم الصيف الإبداعي',450,450)" style="width:175px">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(160deg,#78350F,#D97706,#FDE68A)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">🏕</span>
+            <span class="act-card-dist tag tag-gold" style="font-size:10px;position:absolute;top:8px;left:8px">أسبوع كامل</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag" style="background:rgba(0,0,0,.4);color:#fff;font-size:10px">+450★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">مخيم الصيف الإبداعي</div>
+            <div class="act-card-meta">👧 6-14 · الرياض</div>
+            <div class="act-card-price">450 ر.س</div>
+          </div>
+        </div>
+        <!-- تقنية -->
+        <div class="act-card camp-all camp-tech" onclick="openBooking('💻','معسكر البرمجة والتقنية',600,600)" style="width:175px">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(160deg,#1E1B4B,#4338CA,#818CF8)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">💻</span>
+            <span class="act-card-dist tag" style="background:rgba(0,0,0,.4);color:#fff;font-size:10px;position:absolute;top:8px;left:8px">5 أيام</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-gold">+600★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">معسكر البرمجة والتقنية</div>
+            <div class="act-card-meta">👧 10-16 · جدة</div>
+            <div class="act-card-price">600 ر.س</div>
+          </div>
+        </div>
+        <!-- طبيعة -->
+        <div class="act-card camp-all camp-nature" onclick="openBooking('🌿','مخيم الطبيعة والهايكنج',380,380)" style="width:175px">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(160deg,#14532D,#16A34A,#86EFAC)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">🌿</span>
+            <span class="act-card-dist tag" style="background:rgba(0,0,0,.4);color:#fff;font-size:10px;position:absolute;top:8px;left:8px">3 أيام</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-teal">+380★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">مخيم الطبيعة والهايكنج</div>
+            <div class="act-card-meta">👧 12-18 · أبها</div>
+            <div class="act-card-price">380 ر.س</div>
+          </div>
+        </div>
+        <!-- رياضية -->
+        <div class="act-card camp-all camp-sport" onclick="openBooking('⚽','معسكر كرة القدم الصيفي',320,320)" style="width:175px">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(160deg,#064E3B,#059669,#34D399)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">⚽</span>
+            <span class="act-card-dist tag" style="background:rgba(0,0,0,.4);color:#fff;font-size:10px;position:absolute;top:8px;left:8px">أسبوع</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-gold">+320★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">معسكر كرة القدم الصيفي</div>
+            <div class="act-card-meta">👧 7-14 · الرياض</div>
+            <div class="act-card-price">320 ر.س</div>
+          </div>
+        </div>
+        <!-- فنون -->
+        <div class="act-card camp-all camp-summer" onclick="openBooking('🎨','مخيم الفنون والإبداع',350,350)" style="width:175px">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(160deg,#7C2D12,#EA580C,#FED7AA)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">🎨</span>
+            <span class="act-card-dist tag" style="background:rgba(0,0,0,.4);color:#fff;font-size:10px;position:absolute;top:8px;left:8px">4 أيام</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-orange">+350★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">مخيم الفنون والإبداع</div>
+            <div class="act-card-meta">👧 6-12 · جدة</div>
+            <div class="act-card-price">350 ر.س</div>
+          </div>
+        </div>
+        <!-- قيادة -->
+        <div class="act-card camp-all camp-nature" onclick="openBooking('🧗','مخيم القيادة والمغامرة',500,500)" style="width:175px">
+          <div class="act-card-img">
+            <div class="img-bg" style="background:linear-gradient(160deg,#1C1917,#57534E,#A8A29E)"></div>
+            <div class="img-overlay"></div>
+            <span class="img-emoji">🧗</span>
+            <span class="act-card-dist tag" style="background:rgba(0,0,0,.4);color:#fff;font-size:10px;position:absolute;top:8px;left:8px">أسبوع</span>
+            <span style="position:absolute;top:8px;right:8px" class="tag tag-teal">+500★</span>
+          </div>
+          <div class="act-card-body">
+            <div class="act-card-name">مخيم القيادة والمغامرة</div>
+            <div class="act-card-meta">👧 13-18 · العُلا</div>
+            <div class="act-card-price">500 ر.س</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-top:18px"></div>
+
+      <!-- ══ SUBSCRIPTIONS ══ -->
+      <div class="section-label"><span>💳 الاشتراكات الشهرية</span></div>
+      <div style="padding:0 16px;margin-bottom:14px;font-size:12.5px;color:var(--mid)">اشترك مرة واستمتع بأنشطة غير محدودة طوال الشهر — مع توفير يصل إلى 40%</div>
+
+      <!-- Plans -->
+      <div style="display:flex;flex-direction:column;gap:11px;padding:0 16px;margin-bottom:4px">
+
+        <!-- BASIC -->
+        <div onclick="openSubModal('basic')" style="background:var(--white);border:1.5px solid var(--border);border-radius:18px;overflow:hidden;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--teal-bd)'" onmouseleave="this.style.borderColor='var(--border)'">
+          <div style="padding:16px 18px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--soft);margin-bottom:3px">BASIC</div>
+                <div style="font-size:17px;font-weight:900;color:var(--dark)">الأساسية</div>
+              </div>
+              <div style="text-align:left">
+                <div style="font-size:22px;font-weight:900;color:var(--teal)">99 <span style="font-size:13px;font-weight:600">ر.س/شهر</span></div>
+                <div style="font-size:11px;color:var(--soft);text-decoration:line-through">160 ر.س</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dark)"><span style="color:var(--teal);font-weight:700">✓</span> 4 أنشطة شهرياً (حجز مرن)</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dark)"><span style="color:var(--teal);font-weight:700">✓</span> 5% خصم إضافي على الأنشطة</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--soft)"><span style="color:var(--border);font-weight:700">✗</span> المخيمات والمعسكرات</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--soft)"><span style="color:var(--border);font-weight:700">✗</span> اشتراك عائلي</div>
+            </div>
+          </div>
+          <div style="background:var(--teal-lt);padding:10px 18px;border-top:1px solid var(--teal-bd);font-size:12px;font-weight:700;color:var(--teal);display:flex;justify-content:space-between;align-items:center">
+            <span>اشترك الآن</span><span>←</span>
+          </div>
+        </div>
+
+        <!-- FAMILY — highlighted -->
+        <div onclick="openSubModal('family')" style="background:var(--teal);border:1.5px solid var(--teal);border-radius:18px;overflow:hidden;cursor:pointer;position:relative">
+          <div style="position:absolute;top:12px;left:14px;background:var(--gold);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px">الأكثر طلباً ★</div>
+          <div style="padding:16px 18px;padding-top:38px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:3px">FAMILY</div>
+                <div style="font-size:17px;font-weight:900;color:#fff">العائلية</div>
+              </div>
+              <div style="text-align:left">
+                <div style="font-size:22px;font-weight:900;color:#fff">199 <span style="font-size:13px;font-weight:600">ر.س/شهر</span></div>
+                <div style="font-size:11px;color:rgba(255,255,255,.6);text-decoration:line-through">330 ر.س</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#fff"><span style="color:#FDE68A;font-weight:700">✓</span> 10 أنشطة شهرياً لأفراد العائلة</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#fff"><span style="color:#FDE68A;font-weight:700">✓</span> 10% خصم دائم + أولوية حجز</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#fff"><span style="color:#FDE68A;font-weight:700">✓</span> مخيم واحد مجاني كل 3 أشهر</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:rgba(255,255,255,.65)"><span style="color:rgba(255,255,255,.4);font-weight:700">✗</span> مستشار شخصي</div>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.15);padding:10px 18px;border-top:1px solid rgba(255,255,255,.2);font-size:12px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center">
+            <span>اشترك الآن</span><span>←</span>
+          </div>
+        </div>
+
+        <!-- PREMIUM -->
+        <div onclick="openSubModal('premium')" style="background:var(--dark);border:1.5px solid var(--dark);border-radius:18px;overflow:hidden;cursor:pointer">
+          <div style="padding:16px 18px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--soft);margin-bottom:3px">PREMIUM</div>
+                <div style="font-size:17px;font-weight:900;color:#fff">البريميوم</div>
+              </div>
+              <div style="text-align:left">
+                <div style="font-size:22px;font-weight:900;color:var(--gold)">349 <span style="font-size:13px;font-weight:600;color:var(--soft)">ر.س/شهر</span></div>
+                <div style="font-size:11px;color:var(--soft);text-decoration:line-through">580 ر.س</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#fff"><span style="color:var(--teal);font-weight:700">✓</span> أنشطة غير محدودة لكل العائلة</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#fff"><span style="color:var(--teal);font-weight:700">✓</span> 20% خصم + مستشار شخصي</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#fff"><span style="color:var(--teal);font-weight:700">✓</span> مخيم مجاني كل شهر</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#fff"><span style="color:var(--teal);font-weight:700">✓</span> Girl Hub + رحلات سياحية</div>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.06);padding:10px 18px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;font-weight:700;color:var(--gold);display:flex;justify-content:space-between;align-items:center">
+            <span>اشترك الآن</span><span>←</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Compare toggle -->
+      <div style="padding:10px 16px 4px;text-align:center">
+        <button onclick="toggleCompare()" style="font-size:12.5px;color:var(--teal);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit">
+          مقارنة الباقات بالتفصيل ↓
+        </button>
+      </div>
+      <div id="compare-table" style="display:none;margin:10px 16px 0;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:11.5px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;background:var(--dark);color:#fff;font-weight:700">
+          <div style="padding:10px 8px">الميزة</div>
+          <div style="padding:10px 8px;text-align:center">أساسية</div>
+          <div style="padding:10px 8px;text-align:center;color:#5EEAD4">عائلية</div>
+          <div style="padding:10px 8px;text-align:center;color:var(--gold)">بريميوم</div>
+        </div>
+        ${[
+          ['عدد الأنشطة','4','10','غير محدود'],
+          ['الخصم','5%','10%','20%'],
+          ['أولوية الحجز','✗','✓','✓'],
+          ['مخيمات','✗','ربع سنوي','شهري'],
+          ['Girl Hub','✗','✗','✓'],
+          ['مستشار شخصي','✗','✗','✓'],
+          ['رحلات سياحية','✗','✗','✓'],
+        ].map(r => `
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-top:1px solid var(--border)">
+          <div style="padding:9px 8px;font-weight:600;color:var(--mid)">${r[0]}</div>
+          <div style="padding:9px 8px;text-align:center;color:${r[1]==='✗'?'var(--soft)':'var(--dark)'}">${r[1]}</div>
+          <div style="padding:9px 8px;text-align:center;color:${r[2]==='✗'?'var(--soft)':'var(--teal)'};font-weight:${r[2]!=='✗'?'700':'400'}">${r[2]}</div>
+          <div style="padding:9px 8px;text-align:center;color:${r[3]==='✗'?'var(--soft)':'var(--gold)'};font-weight:${r[3]!=='✗'?'700':'400'}">${r[3]}</div>
+        </div>`).join('')}
+      </div>
+
+      <!-- Join -->
+      <div class="join-banner">
+        <div>
+          <div class="join-title">هل تملك مركزاً؟</div>
+          <div class="join-sub">انضم كشريك مجاناً — إعداد خلال 24 ساعة وتسويق ذكي فوري</div>
+        </div>
+        <button class="join-btn">انضم الآن →</button>
+      </div>
+
+      <div style="height:24px"></div>
+    </div>
+
+    <!-- ══════════ SCREEN: DISCOVER ══════════ -->
+    <div class="screen" id="screen-discover">
+      <div style="padding-top:12px">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" placeholder="ابحث عن نشاط أو مدينة...">
+        </div>
+
+        <!-- Location filter -->
+        <div class="loc-filter">
+          <div class="loc-icon">📍</div>
+          <div style="flex:1">
+            <div class="loc-city">الرياض — حي النخيل</div>
+            <div class="loc-sub">النتائج مرتّبة بالأقرب</div>
+          </div>
+          <div class="loc-sort">
+            <button class="loc-sort-btn active" onclick="sortLoc(this,'near')">الأقرب</button>
+            <button class="loc-sort-btn" onclick="sortLoc(this,'rate')">الأعلى</button>
+            <button class="loc-sort-btn" onclick="sortLoc(this,'price')">السعر</button>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="filterChip(this)">✦ الكل</button>
+          <button class="filter-chip" onclick="filterChip(this)">📖 تعليمي</button>
+          <button class="filter-chip" onclick="filterChip(this)">🎯 ترفيهي</button>
+          <button class="filter-chip" onclick="filterChip(this)">⚡ رياضي</button>
+          <button class="filter-chip" onclick="filterChip(this)">🗺 سياحي</button>
+          <button class="filter-chip" onclick="filterChip(this)">الرياض</button>
+          <button class="filter-chip" onclick="filterChip(this)">جدة</button>
+        </div>
+        <div class="act-list">
+          <div class="act-list-item" onclick="openBooking('⚽','أكاديمية كرة القدم',120,120)">
+            <div class="act-list-img">
+              <div class="img-bg" style="background:linear-gradient(135deg,#064E3B,#10B981)"></div>
+              <span class="img-emoji">⚽</span>
+            </div>
+            <div class="act-list-body">
+              <div class="act-list-name">أكاديمية كرة القدم</div>
+              <div class="act-list-meta">📍 الرياض · 👧 6-12 · <span style="color:var(--teal);font-weight:700">2.3كم</span></div>
+              <div class="act-list-bottom"><span class="act-list-price">120 ر.س</span><span class="act-list-rating">⭐ 4.8</span></div>
+            </div>
+          </div>
+          <div class="act-list-item" onclick="openBooking('🔬','مختبر العلماء',130,130)">
+            <div class="act-list-img">
+              <div class="img-bg" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)"></div>
+              <span class="img-emoji">🔬</span>
+            </div>
+            <div class="act-list-body">
+              <div class="act-list-name">مختبر العلماء الصغار</div>
+              <div class="act-list-meta">📍 الرياض · 👧 7-12 · <span style="color:var(--teal);font-weight:700">2.8كم</span></div>
+              <div class="act-list-bottom"><span class="act-list-price">130 ر.س</span><span class="act-list-rating">⭐ 4.8</span></div>
+            </div>
+          </div>
+          <div class="act-list-item" onclick="openBooking('🤖','نادي الروبوتيكس',175,175)">
+            <div class="act-list-img">
+              <div class="img-bg" style="background:linear-gradient(135deg,#1E1B4B,#818CF8)"></div>
+              <span class="img-emoji">🤖</span>
+            </div>
+            <div class="act-list-body">
+              <div class="act-list-name">نادي الروبوتيكس</div>
+              <div class="act-list-meta">📍 الرياض · 👧 9-14 · <span style="color:var(--teal);font-weight:700">1.7كم</span></div>
+              <div class="act-list-bottom"><span class="act-list-price">175 ر.س</span><span class="act-list-rating">⭐ 4.9</span></div>
+            </div>
+          </div>
+          <div class="act-list-item" onclick="openBooking('💻','البرمجة بـ Scratch',150,150)">
+            <div class="act-list-img">
+              <div class="img-bg" style="background:linear-gradient(135deg,#0D9488,#34D399)"></div>
+              <span class="img-emoji">💻</span>
+            </div>
+            <div class="act-list-body">
+              <div class="act-list-name">البرمجة بـ Scratch</div>
+              <div class="act-list-meta">📍 الرياض · 👧 8-14 · <span style="color:var(--teal);font-weight:700">3.5كم</span></div>
+              <div class="act-list-bottom"><span class="act-list-price">150 ر.س</span><span class="act-list-rating">⭐ 4.9</span></div>
+            </div>
+          </div>
+          <div class="act-list-item" onclick="openBooking('🎨','ورشة الرسم',90,90)">
+            <div class="act-list-img">
+              <div class="img-bg" style="background:linear-gradient(135deg,#7C2D12,#FED7AA)"></div>
+              <span class="img-emoji">🎨</span>
+            </div>
+            <div class="act-list-body">
+              <div class="act-list-name">ورشة الرسم للأطفال</div>
+              <div class="act-list-meta">📍 الرياض · 👧 5-10 · <span style="color:var(--teal);font-weight:700">1.1كم</span></div>
+              <div class="act-list-bottom"><span class="act-list-price">90 ر.س</span><span class="act-list-rating">⭐ 4.7</span></div>
+            </div>
+          </div>
+          <div class="act-list-item" onclick="openBooking('🏊','مدرسة السباحة',110,110)">
+            <div class="act-list-img">
+              <div class="img-bg" style="background:linear-gradient(135deg,#075985,#38BDF8)"></div>
+              <span class="img-emoji">🏊</span>
+            </div>
+            <div class="act-list-body">
+              <div class="act-list-name">مدرسة السباحة</div>
+              <div class="act-list-meta">📍 جدة · 👧 4-8 · <span style="color:var(--soft)">4.2كم</span></div>
+              <div class="act-list-bottom"><span class="act-list-price">110 ر.س</span><span class="act-list-rating">⭐ 4.6</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="height:24px"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ SCREEN: MAP ══════════ -->
+    <div class="screen" id="screen-map">
+      <div class="map-container" style="position:relative;background:#E8F0E8">
+
+        <!-- SVG Road Network -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 390 260" preserveAspectRatio="xMidYMid slice">
+          <rect width="390" height="260" fill="#EEF2E8"/>
+          <!-- City blocks -->
+          <rect x="0"   y="0"   width="68"  height="50" rx="3" fill="#D8E0D0" opacity=".7"/>
+          <rect x="84"  y="0"   width="84"  height="50" rx="3" fill="#C8D4C0" opacity=".8"/>
+          <rect x="184" y="0"   width="80"  height="50" rx="3" fill="#D0DCC8" opacity=".7"/>
+          <rect x="280" y="0"   width="110" height="50" rx="3" fill="#D8E0D0" opacity=".6"/>
+          <rect x="0"   y="72"  width="68"  height="44" rx="3" fill="#C8D4C0" opacity=".6"/>
+          <rect x="84"  y="72"  width="84"  height="44" rx="3" fill="#DDE8D5" opacity=".9"/>
+          <rect x="184" y="72"  width="80"  height="44" rx="3" fill="#C8D4C0" opacity=".7"/>
+          <rect x="280" y="72"  width="110" height="44" rx="3" fill="#D0DCC8" opacity=".6"/>
+          <rect x="0"   y="138" width="68"  height="122" rx="3" fill="#D0DCC8" opacity=".7"/>
+          <rect x="84"  y="138" width="84"  height="122" rx="3" fill="#D8E0D0" opacity=".6"/>
+          <rect x="184" y="138" width="80"  height="122" rx="3" fill="#C8D4C0" opacity=".8"/>
+          <rect x="280" y="138" width="110" height="122" rx="3" fill="#DDE8D5" opacity=".7"/>
+          <!-- Main road H -->
+          <rect x="0"   y="124" width="390" height="14" fill="#FFFDF5" stroke="#D8D0B8" stroke-width=".5"/>
+          <!-- Main road V -->
+          <rect x="168" y="0"   width="16"  height="260" fill="#FFFDF5" stroke="#D8D0B8" stroke-width=".5"/>
+          <!-- Secondary H -->
+          <rect x="0"   y="58"  width="390" height="8" fill="#fff" stroke="#E0D8C8" stroke-width=".5"/>
+          <!-- Secondary V -->
+          <rect x="68"  y="0"   width="8"   height="260" fill="#fff" stroke="#E0D8C8" stroke-width=".5"/>
+          <rect x="268" y="0"   width="8"   height="260" fill="#fff" stroke="#E0D8C8" stroke-width=".5"/>
+          <!-- Route (hidden) -->
+          <path id="map-route-line" d="M 176 135 C 220 120, 240 90, 260 65" stroke="#0D9488" stroke-width="2.5" stroke-dasharray="6,4" fill="none" opacity="0" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Map controls -->
+        <div style="position:absolute;top:12px;left:12px;display:flex;flex-direction:column;gap:6px;z-index:10">
+          <button style="width:36px;height:36px;background:#fff;border:1px solid #E5E7EB;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#374151">+</button>
+          <button style="width:36px;height:36px;background:#fff;border:1px solid #E5E7EB;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#374151">−</button>
+        </div>
+
+        <!-- City label -->
+        <div style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-radius:10px;padding:6px 12px;font-size:11.5px;font-weight:700;color:#111827;box-shadow:0 2px 8px rgba(0,0,0,.1);z-index:10">الرياض — النخيل</div>
+
+        <!-- Activity pins — card style -->
+        <div style="position:absolute;left:22%;top:10%;transform:translate(-50%,-100%);z-index:8;cursor:pointer" onclick="openBooking('⚽','أكاديمية كرة القدم',120,120)">
+          <div style="background:#fff;border-radius:12px;padding:7px 11px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:7px;min-width:95px;border:1.5px solid #E5E7EB">
+            <span style="font-size:18px">⚽</span>
+            <div><div style="font-size:10.5px;font-weight:700;color:#111827;white-space:nowrap">أكاديمية القدم</div><div style="font-size:10.5px;font-weight:800;color:#0D9488">120 ر.س</div></div>
+          </div>
+          <div style="width:10px;height:10px;background:#fff;border-right:1.5px solid #E5E7EB;border-bottom:1.5px solid #E5E7EB;transform:rotate(45deg);margin:-5px auto 0"></div>
+        </div>
+
+        <div style="position:absolute;left:68%;top:8%;transform:translate(-50%,-100%);z-index:8;cursor:pointer" onclick="openBooking('🤖','نادي الروبوتيكس',175,175)">
+          <div style="background:#fff;border-radius:12px;padding:7px 11px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:7px;min-width:90px;border:1.5px solid #0D9488">
+            <span style="font-size:18px">🤖</span>
+            <div><div style="font-size:10.5px;font-weight:700;color:#111827;white-space:nowrap">روبوتيكس</div><div style="font-size:10.5px;font-weight:800;color:#0D9488">175 ر.س</div></div>
+          </div>
+          <div style="width:10px;height:10px;background:#fff;border-right:1.5px solid #0D9488;border-bottom:1.5px solid #0D9488;transform:rotate(45deg);margin:-5px auto 0"></div>
+        </div>
+
+        <div style="position:absolute;left:74%;top:60%;transform:translate(-50%,-100%);z-index:8;cursor:pointer" onclick="openBooking('🎨','ورشة الرسم',90,90)">
+          <div style="background:#fff;border-radius:12px;padding:7px 11px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:7px;min-width:85px;border:1.5px solid #E5E7EB">
+            <span style="font-size:18px">🎨</span>
+            <div><div style="font-size:10.5px;font-weight:700;color:#111827;white-space:nowrap">ورشة رسم</div><div style="font-size:10.5px;font-weight:800;color:#0D9488">90 ر.س</div></div>
+          </div>
+          <div style="width:10px;height:10px;background:#fff;border-right:1.5px solid #E5E7EB;border-bottom:1.5px solid #E5E7EB;transform:rotate(45deg);margin:-5px auto 0"></div>
+        </div>
+
+        <div style="position:absolute;left:20%;top:66%;transform:translate(-50%,-100%);z-index:8;cursor:pointer" onclick="openBooking('🧘‍♀️','تجربة يوغا',80,0)">
+          <div style="background:#fff;border-radius:12px;padding:7px 11px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:7px;border:1.5px solid #E5E7EB">
+            <span style="font-size:18px">🧘‍♀️</span>
+            <div><div style="font-size:10.5px;font-weight:700;color:#111827">يوغا</div><div style="font-size:10.5px;font-weight:800;color:#0D9488">80 ر.س</div></div>
+          </div>
+          <div style="width:10px;height:10px;background:#fff;border-right:1.5px solid #E5E7EB;border-bottom:1.5px solid #E5E7EB;transform:rotate(45deg);margin:-5px auto 0"></div>
+        </div>
+
+        <div style="position:absolute;left:50%;top:84%;transform:translate(-50%,-100%);z-index:8;cursor:pointer" onclick="openBooking('🏊','مدرسة السباحة',110,110)">
+          <div style="background:#fff;border-radius:12px;padding:7px 11px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:7px;border:1.5px solid #E5E7EB">
+            <span style="font-size:18px">🏊</span>
+            <div><div style="font-size:10.5px;font-weight:700;color:#111827">سباحة</div><div style="font-size:10.5px;font-weight:800;color:#0D9488">110 ر.س</div></div>
+          </div>
+          <div style="width:10px;height:10px;background:#fff;border-right:1.5px solid #E5E7EB;border-bottom:1.5px solid #E5E7EB;transform:rotate(45deg);margin:-5px auto 0"></div>
+        </div>
+
+        <!-- User location with pulse -->
+        <div style="position:absolute;left:45%;top:51%;transform:translate(-50%,-50%);z-index:9">
+          <div style="width:44px;height:44px;border-radius:50%;background:rgba(13,148,136,.15);display:flex;align-items:center;justify-content:center;animation:mapPulse 2.5s ease-in-out infinite">
+            <div style="width:16px;height:16px;border-radius:50%;background:#0D9488;border:3px solid #fff;box-shadow:0 2px 10px rgba(13,148,136,.5)"></div>
+          </div>
+        </div>
+
+        <!-- Meeting point pin (hidden) -->
+        <div id="map-meet-pin" style="position:absolute;left:66%;top:25%;transform:translate(-50%,-100%);z-index:10;display:none;animation:dropPin .35s ease">
+          <div style="background:#111827;border-radius:12px;padding:7px 12px;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.3)">
+            <span style="font-size:14px">📍</span>
+            <span style="font-size:11px;font-weight:800;color:#fff;white-space:nowrap">نقطة الالتقاء</span>
+          </div>
+          <div style="width:10px;height:10px;background:#111827;transform:rotate(45deg);margin:-5px auto 0"></div>
+        </div>
+
+        <!-- Route line SVG overlay (hidden) -->
+        <svg id="route-overlay" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none" viewBox="0 0 390 260">
+          <path d="M 175 133 C 220 115, 245 80, 257 65" stroke="#0D9488" stroke-width="2.5" stroke-dasharray="7,4" fill="none" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Meeting point button -->
+        <button onclick="openMeetingSheet()" style="position:absolute;bottom:14px;right:14px;background:#111827;color:#fff;border:none;border-radius:24px;padding:10px 16px;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 18px rgba(0,0,0,.3);z-index:10;transition:transform .15s">
+          <span style="font-size:16px">👥</span> نقطة الالتقاء
+        </button>
+      </div>
+      <div class="section-label"><span>الأقرب لك</span></div>
+      <div class="nearby-list">
+        <div class="nearby-item" onclick="openBooking('🎨','ورشة الرسم',90,90)">
+          <div class="nearby-emoji">🎨</div>
+          <div class="nearby-info">
+            <div class="nearby-name">ورشة الرسم</div>
+            <div class="nearby-meta">📖 تعليمي · 5-10 سنة</div>
+          </div>
+          <span class="nearby-dist">1.1كم</span>
+        </div>
+        <div class="nearby-item" onclick="openBooking('🤖','نادي الروبوتيكس',175,175)">
+          <div class="nearby-emoji">🤖</div>
+          <div class="nearby-info">
+            <div class="nearby-name">نادي الروبوتيكس</div>
+            <div class="nearby-meta">💻 تقني · 9-14 سنة</div>
+          </div>
+          <span class="nearby-dist">1.7كم</span>
+        </div>
+        <div class="nearby-item" onclick="openBooking('⚽','أكاديمية كرة القدم',120,120)">
+          <div class="nearby-emoji">⚽</div>
+          <div class="nearby-info">
+            <div class="nearby-name">أكاديمية كرة القدم</div>
+            <div class="nearby-meta">⚡ رياضي · 6-12 سنة</div>
+          </div>
+          <span class="nearby-dist">2.3كم</span>
+        </div>
+        <div class="nearby-item" onclick="openBooking('🔬','مختبر العلماء',130,130)">
+          <div class="nearby-emoji">🔬</div>
+          <div class="nearby-info">
+            <div class="nearby-name">مختبر العلماء</div>
+            <div class="nearby-meta">📖 تعليمي · 7-12 سنة</div>
+          </div>
+          <span class="nearby-dist">2.8كم</span>
+        </div>
+      </div>
+      <div style="height:24px"></div>
+    </div>
+
+    <!-- ══════════ SCREEN: WALLET ══════════ -->
+    <div class="screen" id="screen-wallet">
+      <div class="wallet-card">
+        <div class="wc-top">
+          <div>
+            <div style="font-size:10px;color:rgba(255,255,255,.6);margin-bottom:3px">بطاقة الولاء</div>
+            <div class="wc-brand">✦ وين نوديهم</div>
+          </div>
+          <div class="wc-tier">◈ فضي</div>
+        </div>
+        <div class="wc-num">WN-2026-8821</div>
+        <div class="wc-bottom">
+          <div>
+            <div class="wc-holder-label">حامل البطاقة</div>
+            <div class="wc-holder-name">نورة العتيبي</div>
+          </div>
+          <div>
+            <div class="wc-pts-label">رصيد النقاط</div>
+            <div class="wc-pts-val" id="pts-display">820</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wallet-grid">
+        <div class="wallet-mini">
+          <div class="wm-icon">👛</div>
+          <div class="wm-label">رصيد المحفظة</div>
+          <div class="wm-val teal">150 ر.س</div>
+        </div>
+        <div class="wallet-mini">
+          <div class="wm-icon">🔑</div>
+          <div class="wm-label">كود الإحالة</div>
+          <div class="wm-val gold">NOORA82</div>
+        </div>
+      </div>
+
+      <div class="tier-section">
+        <div class="tier-header">التقدم نحو المستوى الذهبي ✦</div>
+        <div class="tier-progress">
+          <div class="tier-progress-row">
+            <span class="tier-from">◈ فضي · 820 نقطة</span>
+            <span class="tier-to">680 متبقية لـ ◆ ذهبي</span>
+          </div>
+          <div class="tier-bar"><div class="tier-fill" style="width:55%"></div></div>
+          <div class="tier-range"><span>500</span><span>1500</span></div>
+        </div>
+      </div>
+
+      <div class="tier-pills">
+        <div class="tier-pill"><div class="tp-icon">✦</div><div class="tp-name">برونزي</div></div>
+        <div class="tier-pill current"><div class="tp-icon">◈</div><div class="tp-name">فضي</div></div>
+        <div class="tier-pill"><div class="tp-icon">◆</div><div class="tp-name">ذهبي</div></div>
+        <div class="tier-pill"><div class="tp-icon">❋</div><div class="tp-name">بلاتيني</div></div>
+      </div>
+
+      <div class="tier-section">
+        <div class="tier-header">مزايا مستواك الفضي</div>
+        <div class="perks">
+          <div class="perk-item">
+            <div class="perk-icon">🏷</div>
+            <div class="perk-text">10% خصم على جميع الحجوزات</div>
+            <div class="perk-check">✓</div>
+          </div>
+          <div class="perk-item">
+            <div class="perk-icon">⚡</div>
+            <div class="perk-text">أولوية في الحجز قبل العامة</div>
+            <div class="perk-check">✓</div>
+          </div>
+          <div class="perk-item" style="opacity:.45">
+            <div class="perk-icon">🎁</div>
+            <div class="perk-text">نشاط مجاني كل 3 أشهر</div>
+            <div style="margin-right:auto;font-size:11px;color:var(--soft)">◆ ذهبي</div>
+          </div>
+          <div class="perk-item" style="opacity:.45">
+            <div class="perk-icon">👤</div>
+            <div class="perk-text">مستشار شخصي مخصص</div>
+            <div style="margin-right:auto;font-size:11px;color:var(--soft)">❋ بلاتيني</div>
+          </div>
+        </div>
+      </div>
+      <div style="height:24px"></div>
+    </div>
+
+    <!-- ══════════ SCREEN: PROFILE ══════════ -->
+    <div class="screen" id="screen-profile">
+      <div class="profile-header">
+        <div class="profile-avatar">👩</div>
+        <div class="profile-name">نورة العتيبي</div>
+        <div class="profile-sub">عضو منذ يناير 2025 · ◈ فضي</div>
+      </div>
+
+      <!-- Child profile -->
+      <div class="child-profile-card">
+        <div class="cpc-head">
+          <div class="cpc-title">✦ ملف الطفل الذكي</div>
+          <span class="cpc-edit">تعديل</span>
+        </div>
+        <div class="cpc-name">سارة · 8 سنوات</div>
+        <div class="cpc-tags">
+          <span class="cpc-tag">علوم</span>
+          <span class="cpc-tag">رسم</span>
+          <span class="cpc-tag">مغامرة</span>
+          <span class="cpc-tag">هادئة</span>
+          <span class="cpc-tag">هدف: إبداعي</span>
+        </div>
+        <div class="cpc-suggestion">
+          <div class="cpc-sug-label">★ اقتراح هذا الأسبوع لسارة</div>
+          <div class="cpc-sug-item">◆ مختبر العلماء الصغار — السبت 9ص · 2.8كم</div>
+          <div class="cpc-sug-item">◆ ورشة الرسم — الأربعاء 4م · 1.1كم</div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div style="margin:0 16px 10px;font-size:13px;font-weight:700;color:var(--mid)">الإعدادات</div>
+      <div class="settings-list" style="margin-bottom:14px">
+        <div class="setting-item">
+          <div class="setting-icon" style="background:#F0FDFA">🔔</div>
+          <div class="setting-label">الإشعارات</div>
+          <div class="setting-arrow">←</div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-icon" style="background:#FEF3C7">📍</div>
+          <div class="setting-label">الموقع والمدينة</div>
+          <div class="setting-arrow">←</div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-icon" style="background:#FFF7ED">🔒</div>
+          <div class="setting-label">الخصوصية والأمان</div>
+          <div class="setting-arrow">←</div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-icon" style="background:#F0FDFA">🤝</div>
+          <div class="setting-label">إدارة الاشتراك</div>
+          <div class="setting-arrow">←</div>
+        </div>
+      </div>
+
+      <div style="margin:0 16px 10px;font-size:13px;font-weight:700;color:var(--mid)">للمراكز والشركاء</div>
+      <div class="settings-list" style="margin-bottom:24px">
+        <div class="setting-item">
+          <div class="setting-icon" style="background:#F0FDFA">🏢</div>
+          <div class="setting-label">سجّل مركزك مجاناً</div>
+          <div class="setting-arrow" style="color:var(--teal)">←</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+      <button class="nav-item active" id="nav-home" onclick="goTo('home')">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">الرئيسية</span>
+      </button>
+      <button class="nav-item" id="nav-discover" onclick="goTo('discover')">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-label">استكشاف</span>
+      </button>
+      <button class="nav-item" id="nav-map" onclick="goTo('map')">
+        <span class="nav-icon">📍</span>
+        <span class="nav-label">الخريطة</span>
+      </button>
+      <button class="nav-item" id="nav-wallet" onclick="goTo('wallet')">
+        <span class="nav-icon">⭐</span>
+        <span class="nav-label">المحفظة</span>
+      </button>
+      <button class="nav-item" id="nav-profile" onclick="goTo('profile')">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">حسابي</span>
+      </button>
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" onclick="openChat()">✦</button>
+
+    <!-- ══ BOOKING SHEET ══ -->
+    <div class="sheet-overlay" id="booking-overlay" onclick="closeBooking(event)">
+      <div class="sheet" id="booking-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div>
+            <div class="sheet-emoji" id="b-emoji">⚽</div>
+            <div class="sheet-title" id="b-title">أكاديمية كرة القدم</div>
+          </div>
+          <button class="sheet-close" onclick="closeBookingDirect()">✕</button>
+        </div>
+
+        <div id="step-1">
+          <div class="sheet-points-badge" id="b-pts-badge">★ ستكسب +120 نقطة ولاء</div>
+
+          <!-- Individual / Group toggle -->
+          <div class="booking-type-toggle">
+            <button class="btt-btn active" id="btn-individual" onclick="setBookingType('individual')">👤 حجز فردي</button>
+            <button class="btt-btn" id="btn-group" onclick="setBookingType('group')">👥 حجز مجموعة</button>
+          </div>
+
+          <!-- Individual info -->
+          <div id="individual-info" style="padding:0 20px;margin-bottom:10px">
+            <div style="background:var(--teal-lt);border:1px solid var(--teal-bd);border-radius:10px;padding:9px 12px;font-size:12px;color:var(--teal);font-weight:600">
+              ✦ للأفراد والعائلات — حجز شخص واحد أو طفل واحد
+            </div>
+          </div>
+
+          <!-- Group info -->
+          <div id="group-info" style="display:none">
+            <div class="group-fields">
+              <div class="group-counter">
+                <span class="gc-label">عدد الأفراد</span>
+                <div class="gc-controls">
+                  <button class="gc-btn" onclick="changeGroup(-1)">−</button>
+                  <span class="gc-val" id="group-count">5</span>
+                  <button class="gc-btn" onclick="changeGroup(1)">+</button>
+                </div>
+              </div>
+              <div class="group-counter" style="margin-bottom:0">
+                <span class="gc-label">نوع المجموعة</span>
+                <div style="display:flex;gap:6px">
+                  <button class="gc-btn" id="gt-school" onclick="setGroupType('school',this)" style="width:auto;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700">مدرسة</button>
+                  <button class="gc-btn" id="gt-family" onclick="setGroupType('family',this)" style="width:auto;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;background:var(--teal);color:#fff;border-color:var(--teal)">عائلات</button>
+                  <button class="gc-btn" id="gt-corp" onclick="setGroupType('corp',this)" style="width:auto;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700">شركة</button>
+                </div>
+              </div>
+            </div>
+            <div style="padding:0 20px;margin-bottom:10px">
+              <div class="group-note">★ خصم 15% على حجوزات المجموعات (5 أشخاص فأكثر)</div>
+            </div>
+          </div>
+
+          <div style="padding:0 20px;font-size:13px;font-weight:700;color:var(--dark);margin-bottom:10px">اختر الوقت</div>
+          <div class="session-list">
+            <div class="session-item" onclick="selectSession(this)">◷ الأحد 4م</div>
+            <div class="session-item" onclick="selectSession(this)">◷ الثلاثاء 5م</div>
+            <div class="session-item" onclick="selectSession(this)">◷ الجمعة 10ص</div>
+          </div>
+          <button class="sheet-btn" id="next-btn" disabled onclick="goStep2()">التالي ←</button>
+        </div>
+
+        <div id="step-2" style="display:none">
+          <div class="field-wrap">
+            <div class="field-label">اسم الطفل</div>
+            <input class="field-input" id="child-name" placeholder="مثال: سارة" oninput="checkFields()">
+          </div>
+          <div class="field-wrap">
+            <div class="field-label">رقم الجوال</div>
+            <input class="field-input" id="phone-num" placeholder="05XXXXXXXX" oninput="checkFields()">
+          </div>
+          <div style="padding:0 20px;margin-bottom:12px">
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:12.5px;color:var(--mid)">
+              📋 <strong id="summary-text"></strong>
+            </div>
+          </div>
+          <div style="padding:0 20px;display:flex;gap:8px">
+            <button onclick="goStep1()" style="flex:1;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;font-weight:600;color:var(--mid)">← رجوع</button>
+            <button class="sheet-btn" id="confirm-btn" disabled onclick="confirmBooking()" style="flex:2;margin:0;width:auto;padding:13px">تأكيد الحجز ✓</button>
+          </div>
+        </div>
+
+        <div id="step-3" style="display:none">
+          <div class="confirm-screen">
+            <div class="confirm-check">✦</div>
+            <div class="confirm-title">تم الحجز!</div>
+            <div class="confirm-sub">سيصلك تأكيد على رقمك</div>
+            <div class="pts-badge" id="pts-earned-badge">★ +120 نقطة أُضيفت لرصيدك!</div>
+            <div class="qr-box">
+              <div class="qr-label">رمز الدخول</div>
+              <div class="qr-code" id="qr-code-val">WN-XXXXX</div>
+              <div class="qr-symbol">⬛</div>
+              <div class="qr-label">اعرضه عند الدخول</div>
+            </div>
+            <button class="sheet-btn" style="margin:0;width:100%" onclick="closeBookingDirect()">ممتاز!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SUBSCRIPTION MODAL ══ -->
+    <div class="sheet-overlay" id="sub-overlay" onclick="if(event.target===this)closeSubModal()">
+      <div class="sheet" id="sub-sheet">
+        <div class="sheet-handle"></div>
+        <div style="padding:16px 20px 8px;display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:17px;font-weight:900;color:var(--dark)" id="sub-title">الباقة العائلية</div>
+          <button onclick="closeSubModal()" style="background:none;border:none;font-size:20px;color:var(--soft);cursor:pointer">✕</button>
+        </div>
+        <div style="padding:0 20px;margin-bottom:14px">
+          <div id="sub-price-badge" style="background:var(--teal);color:#fff;border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:11px;opacity:.8;margin-bottom:2px">السعر الشهري</div>
+              <div style="font-size:26px;font-weight:900" id="sub-price-val">199 ر.س</div>
+            </div>
+            <div style="text-align:left">
+              <div style="font-size:11px;opacity:.7;text-decoration:line-through" id="sub-original">330 ر.س</div>
+              <div style="font-size:13px;font-weight:700;background:var(--gold);padding:2px 10px;border-radius:20px;margin-top:4px" id="sub-save">وفّر 131 ر.س</div>
+            </div>
+          </div>
+        </div>
+        <!-- Billing toggle -->
+        <div class="booking-type-toggle" style="margin:0 20px 14px">
+          <button class="btt-btn active" id="bill-monthly" onclick="setBilling('monthly')">شهري</button>
+          <button class="btt-btn" id="bill-yearly" onclick="setBilling('yearly')">سنوي <span style="font-size:10px;color:var(--teal)">(خصم 20%)</span></button>
+        </div>
+        <!-- Perks -->
+        <div id="sub-perks" style="padding:0 20px;display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+        <!-- Trial note -->
+        <div style="margin:0 20px 14px;background:var(--gold-lt);border:1px solid var(--gold-bd);border-radius:10px;padding:10px 13px;font-size:12.5px;color:var(--gold);font-weight:600">
+          ★ جرّب مجاناً 14 يوم — لا يُحتسب منك شيء الآن
+        </div>
+        <div style="padding:0 20px">
+          <button class="sheet-btn" onclick="confirmSub()" style="margin:0;width:100%">ابدأ التجربة المجانية ←</button>
+        </div>
+        <div id="sub-confirmed" style="display:none;padding:20px;text-align:center">
+          <div style="font-size:48px;color:var(--teal)">✦</div>
+          <div style="font-size:19px;font-weight:900;color:var(--dark);margin:10px 0 6px">تم الاشتراك!</div>
+          <div style="font-size:13px;color:var(--mid);margin-bottom:16px">مرحباً بك في وين نوديهم <span id="sub-plan-label"></span> — استمتع بأنشطتك الآن.</div>
+          <button class="sheet-btn" onclick="closeSubModal()" style="margin:0;width:100%">ابدأ الاستكشاف ←</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ AI CHAT ══ -->
+    <div class="chat-overlay" id="chat-overlay" onclick="closeChat(event)">
+      <div class="chat-sheet">
+        <div class="chat-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="chat-avatar">✦</div>
+            <div>
+              <div class="chat-name">مساعد وين نوديهم</div>
+              <div class="chat-status">● متصل — حجز، ترتيب، استشارة</div>
+            </div>
+          </div>
+          <button class="chat-close" onclick="closeChat()">✕</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+          <div class="chat-msg ai">أهلاً نورة! 👋 أنا مساعدك الذكي في وين نوديهم. أقدر أساعدك تلقين النشاط المناسب لسارة، أو أرتّب معك يوم عائلي كامل. كيف أقدر أساعدك؟</div>
+        </div>
+        <div class="quick-replies">
+          <button class="qr-btn" onclick="sendMsg('نشاط مناسب لسارة 8 سنين')">نشاط لسارة 8 سنين</button>
+          <button class="qr-btn" onclick="sendMsg('رتبي يوم عائلي')">يوم عائلي</button>
+          <button class="qr-btn" onclick="sendMsg('أقرب نشاط الآن')">الأقرب الآن</button>
+          <button class="qr-btn" onclick="sendMsg('Girl Hub اليوم')">Girl Hub اليوم</button>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chat-input" placeholder="اكتبي رسالتك..." onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="chat-send" onclick="sendMsg()">↑</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+</div><!-- /desktop-wrap -->
+
+<script>
+/* ── SORT / LOCATION ── */
+function sortLoc(el, type) {
+  document.querySelectorAll('.loc-sort-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const labels = { near:'مرتّبة بالأقرب', rate:'مرتّبة بالتقييم', price:'مرتّبة بالسعر' };
+  document.querySelectorAll('.loc-sub').forEach(s => s.textContent = labels[type]);
+}
+
+/* ── BOOKING TYPE ── */
+let bookingType = 'individual';
+let groupCount = 5;
+
+function setBookingType(type) {
+  bookingType = type;
+  document.getElementById('btn-individual').classList.toggle('active', type==='individual');
+  document.getElementById('btn-group').classList.toggle('active', type==='group');
+  document.getElementById('individual-info').style.display = type==='individual' ? 'block' : 'none';
+  document.getElementById('group-info').style.display = type==='group' ? 'block' : 'none';
+}
+
+function changeGroup(delta) {
+  groupCount = Math.max(2, Math.min(50, groupCount + delta));
+  document.getElementById('group-count').textContent = groupCount;
+}
+
+let groupType = 'family';
+function setGroupType(type, el) {
+  groupType = type;
+  ['school','family','corp'].forEach(t => {
+    const b = document.getElementById('gt-'+t);
+    if(b) { b.style.background = t===type ? 'var(--teal)' : 'var(--teal-lt)'; b.style.color = t===type ? '#fff' : 'var(--teal)'; b.style.borderColor = 'var(--teal)'; }
+  });
+}
+
+/* ── CAMP TABS ── */
+function campTab(el, type) {
+  document.querySelectorAll('#camp-tabs .type-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#camp-cards .act-card').forEach(card => {
+    card.style.display = (type === 'all' || card.classList.contains('camp-' + type)) ? 'block' : 'none';
+  });
+}
+
+/* ── COMPARE TABLE ── */
+function toggleCompare() {
+  const t = document.getElementById('compare-table');
+  const btn = event.target;
+  const open = t.style.display === 'none';
+  t.style.display = open ? 'block' : 'none';
+  btn.textContent = open ? 'إخفاء المقارنة ↑' : 'مقارنة الباقات بالتفصيل ↓';
+}
+
+/* ── SUBSCRIPTION MODAL ── */
+const PLANS = {
+  basic:   { title:'الباقة الأساسية',  price:99,  original:160, save:61,  color:'var(--teal)',    perks:['4 أنشطة شهرياً','5% خصم إضافي','إشعارات أنشطة جديدة'] },
+  family:  { title:'الباقة العائلية',  price:199, original:330, save:131, color:'var(--teal)',    perks:['10 أنشطة شهرياً لكل العائلة','10% خصم + أولوية حجز','مخيم مجاني كل 3 أشهر','ملف ذكي لكل طفل'] },
+  premium: { title:'الباقة البريميوم', price:349, original:580, save:231, color:'var(--dark)',    perks:['أنشطة غير محدودة','20% خصم + مستشار شخصي','مخيم مجاني شهرياً','Girl Hub + رحلات سياحية','أولوية قصوى في كل الحجوزات'] },
+};
+let currentPlan = 'family';
+let billing = 'monthly';
+
+function openSubModal(plan) {
+  currentPlan = plan;
+  billing = 'monthly';
+  document.getElementById('sub-confirmed').style.display = 'none';
+  document.getElementById('sub-perks').style.display = 'flex';
+  document.querySelector('#sub-sheet .sheet-btn') && (document.querySelector('#sub-sheet .sheet-btn').style.display = 'block');
+  renderSubModal();
+  document.getElementById('sub-overlay').classList.add('open');
+}
+
+function renderSubModal() {
+  const p = PLANS[currentPlan];
+  const mult = billing === 'yearly' ? 0.8 : 1;
+  const price = Math.round(p.price * mult);
+  document.getElementById('sub-title').textContent = p.title;
+  document.getElementById('sub-price-val').textContent = price + ' ر.س';
+  document.getElementById('sub-original').textContent = p.original + ' ر.س';
+  document.getElementById('sub-save').textContent = 'وفّر ' + (p.original - price) + ' ر.س';
+  document.getElementById('sub-price-badge').style.background = currentPlan === 'premium' ? 'var(--dark)' : 'var(--teal)';
+  const perksEl = document.getElementById('sub-perks');
+  perksEl.innerHTML = p.perks.map(pk =>
+    `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="width:24px;height:24px;border-radius:50%;background:var(--teal-lt);border:1.5px solid var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--teal);flex-shrink:0">✓</div>
+      <span style="font-size:13px;color:var(--dark);font-weight:600">${pk}</span>
+    </div>`
+  ).join('');
+}
+
+function setBilling(type) {
+  billing = type;
+  document.getElementById('bill-monthly').classList.toggle('active', type === 'monthly');
+  document.getElementById('bill-yearly').classList.toggle('active', type === 'yearly');
+  renderSubModal();
+}
+
+function confirmSub() {
+  document.getElementById('sub-perks').style.display = 'none';
+  document.querySelector('#sub-sheet .sheet-btn').style.display = 'none';
+  document.getElementById('sub-confirmed').style.display = 'block';
+  document.getElementById('sub-plan-label').textContent = PLANS[currentPlan].title;
+  document.querySelector('#sub-sheet .booking-type-toggle').style.display = 'none';
+}
+
+function closeSubModal() {
+  document.getElementById('sub-overlay').classList.remove('open');
+  document.querySelector('#sub-sheet .booking-type-toggle') && (document.querySelector('#sub-sheet .booking-type-toggle').style.display = 'flex');
+}
+
+/* ── HOOD TABS ── */
+function hoodTab(el, type) {
+  document.querySelectorAll('#hood-tabs .type-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#hood-list .hood-item').forEach(item => {
+    item.style.display = (type === 'all' || item.classList.contains('hood-' + type)) ? 'flex' : 'none';
+  });
+}
+
+/* ── RURAL TABS ── */
+function ruralTab(el, type) {
+  document.querySelectorAll('#rural-tabs .type-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#rural-list .hood-item').forEach(item => {
+    item.style.display = (type === 'all' || item.classList.contains('rural-' + type)) ? 'flex' : 'none';
+  });
+}
+
+/* ── NAVIGATION ── */
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-'+screen).classList.add('active');
+  document.getElementById('nav-'+screen)?.classList.add('active');
+}
+
+/* ── TYPE FILTER ── */
+function filterType(el) {
+  document.querySelectorAll('.type-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+function filterChip(el) {
+  document.querySelectorAll('.filter-chip').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── BOOKING ── */
+let currentPts = 120;
+let selectedSession = null;
+
+function openBooking(emoji, title, pts, price) {
+  currentPts = pts || 100;
+  selectedSession = null;
+  document.getElementById('b-emoji').textContent = emoji;
+  document.getElementById('b-title').textContent = title;
+  document.getElementById('b-pts-badge').textContent = '★ ستكسب +' + currentPts + ' نقطة ولاء';
+  document.getElementById('next-btn').disabled = true;
+  document.getElementById('step-1').style.display = 'block';
+  document.getElementById('step-2').style.display = 'none';
+  document.getElementById('step-3').style.display = 'none';
+  document.getElementById('child-name').value = '';
+  document.getElementById('phone-num').value = '';
+  document.querySelectorAll('.session-item').forEach(s => s.classList.remove('selected'));
+  document.getElementById('booking-overlay').classList.add('open');
+  // Reset booking type
+  bookingType = 'individual';
+  groupCount = 5;
+  document.getElementById('btn-individual').classList.add('active');
+  document.getElementById('btn-group').classList.remove('active');
+  document.getElementById('individual-info').style.display = 'block';
+  document.getElementById('group-info').style.display = 'none';
+  document.getElementById('group-count').textContent = '5';
+}
+
+function closeBooking(e) {
+  if(e.target === document.getElementById('booking-overlay')) closeBookingDirect();
+}
+function closeBookingDirect() {
+  document.getElementById('booking-overlay').classList.remove('open');
+}
+
+function selectSession(el) {
+  document.querySelectorAll('.session-item').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSession = el.textContent.trim();
+  document.getElementById('next-btn').disabled = false;
+}
+
+function goStep2() {
+  if(!selectedSession) return;
+  document.getElementById('step-1').style.display = 'none';
+  document.getElementById('step-2').style.display = 'block';
+  const title = document.getElementById('b-title').textContent;
+  const typeLabel = bookingType === 'group' ? ` · مجموعة ${groupCount} أشخاص` : ' · حجز فردي';
+  document.getElementById('summary-text').textContent = title + ' · ' + selectedSession + typeLabel;
+  document.getElementById('confirm-btn').disabled = true;
+}
+
+function goStep1() {
+  document.getElementById('step-2').style.display = 'none';
+  document.getElementById('step-1').style.display = 'block';
+}
+
+function checkFields() {
+  const n = document.getElementById('child-name').value.trim();
+  const p = document.getElementById('phone-num').value.trim();
+  document.getElementById('confirm-btn').disabled = !(n && p);
+}
+
+function confirmBooking() {
+  const code = 'WN-' + Math.random().toString(36).substring(2,7).toUpperCase();
+  document.getElementById('qr-code-val').textContent = code;
+  document.getElementById('pts-earned-badge').textContent = '★ +' + currentPts + ' نقطة أُضيفت لرصيدك!';
+  document.getElementById('step-2').style.display = 'none';
+  document.getElementById('step-3').style.display = 'block';
+  // Update points display
+  const ptsEl = document.getElementById('pts-display');
+  if(ptsEl) {
+    const cur = parseInt(ptsEl.textContent.replace(',','')) || 820;
+    ptsEl.textContent = (cur + currentPts).toLocaleString();
+  }
+}
+
+/* ── AI CHAT ── */
+const RESP = {
+  'نشاط مناسب لسارة 8 سنين': 'بناءً على ملف سارة (علوم + رسم + مغامرة) أنصح بـ:\n◆ مختبر العلماء — السبت 9ص · 2.8كم\n◆ ورشة الرسم — الأربعاء 4م · 1.1كم\nستكسبين +220 نقطة للحجزين! تبين أحجز؟',
+  'رتبي يوم عائلي': 'جدول مقترح ليوم مميز:\n🌅 9ص — مختبر العلماء (2 ساعة)\n🍽 12ظ — استراحة غداء\n🎨 2م — ورشة رسم\n♟ 4م — نادي شطرنج لليافعين\n\nإجمالي النقاط: +450★ للعائلة!',
+  'أقرب نشاط الآن': 'أقرب نشاط متاح اليوم:\n◆ ورشة الرسم · 1.1كم — يبدأ 4م\n◆ نادي الروبوتيكس · 1.7كم — يبدأ 5م\n\nتبين أحجز لسارة الآن؟',
+  'Girl Hub اليوم': 'المتاح اليوم في Girl Hub:\n◆ جلسة يوغا — 5م · 3.2كم\n◆ قهوة نسائية — مفتوح طوال اليوم · 2.1كم\n\nكلاهما رائع! أيهما تفضلين؟',
+};
+
+function openChat() {
+  document.getElementById('chat-overlay').classList.add('open');
+}
+function closeChat(e) {
+  if(!e || e.target === document.getElementById('chat-overlay')) {
+    document.getElementById('chat-overlay').classList.remove('open');
+  }
+}
+function sendMsg(text) {
+  const input = document.getElementById('chat-input');
+  const msg = text || input.value.trim();
+  if(!msg) return;
+  input.value = '';
+  const body = document.getElementById('chat-body');
+  const uDiv = document.createElement('div');
+  uDiv.className = 'chat-msg user';
+  uDiv.textContent = msg;
+  body.appendChild(uDiv);
+  body.scrollTop = body.scrollHeight;
+  setTimeout(() => {
+    const aDiv = document.createElement('div');
+    aDiv.className = 'chat-msg ai';
+    aDiv.textContent = RESP[msg] || 'فهمت طلبك! دعيني أبحث عن الأنسب لك. هل تريدين أنشطة قريبة الآن أو في وقت محدد؟ ✦';
+    body.appendChild(aDiv);
+    body.scrollTop = body.scrollHeight;
+  }, 650);
+}
+
+function openMeetingSheet() {
+  document.getElementById('meet-sheet-overlay').classList.add('open');
+  const pin = document.getElementById('map-meet-pin');
+  if(pin) pin.style.display = 'block';
+  const route = document.getElementById('route-overlay');
+  if(route) route.style.display = 'block';
+}
+function closeMeetingSheet() {
+  document.getElementById('meet-sheet-overlay').classList.remove('open');
+}
+function selMeetLoc(el) {
+  document.querySelectorAll('.ms2-loc-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function doMeetShare() {
+  closeMeetingSheet();
+  // Show toast
+  const t = document.createElement('div');
+  t.style.cssText = 'position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 20px;border-radius:16px;font-size:13px;font-weight:800;z-index:999;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.35);font-family:inherit';
+  t.textContent = '✓ تم إرسال الرابط عبر واتساب';
+  document.getElementById('phone').appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 2500);
+}
+
+
+// Meeting point steps
+function goStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('meet-step-' + i).style.display = i===n ? 'block' : 'none';
+    const dot = document.getElementById('step-dot-' + i);
+    const label = document.getElementById('step-label-' + i);
+    if(dot) {
+      dot.style.background = i <= n ? '#0D9488' : '#E5E7EB';
+      dot.style.color = i <= n ? '#fff' : '#9CA3AF';
+    }
+    if(label) {
+      label.style.color = i <= n ? '#0D9488' : '#9CA3AF';
+      label.style.fontWeight = i <= n ? '700' : '600';
+    }
+  });
+}
+
+function selTime(el, label) {
+  el.parentElement.querySelectorAll('[onclick^="selTime"]').forEach(e => {
+    e.style.borderColor = '#E5E7EB';
+    e.style.background = '#fff';
+    const ch = e.querySelector('div:last-child');
+    if(ch) { ch.style.background = '#E5E7EB'; ch.style.color = '#9CA3AF'; ch.textContent = '○'; }
+  });
+  el.style.borderColor = '#0D9488';
+  el.style.background = '#F0FDFA';
+  const ch = el.querySelector('div:last-child');
+  if(ch) { ch.style.background = '#0D9488'; ch.style.color = '#fff'; ch.textContent = '✓'; }
+}
+
+function toggleFam(el, statusId, name) {
+  const checked = el.textContent === '✓';
+  if(checked) {
+    el.textContent = '○';
+    el.style.background = 'none';
+    el.style.border = '2px solid #E5E7EB';
+    el.style.color = '#0D9488';
+    document.getElementById(statusId).textContent = 'لم يرَ الدعوة بعد';
+    // Reset ETA
+    const etaId = statusId.replace('Status','status').replace('dad-status','dad-eta').replace('gran-status','gran-eta');
+    const etaEl = document.getElementById(name==='عبدالله' ? 'dad-eta' : 'gran-eta');
+    if(etaEl) { etaEl.textContent = 'لم ينضم'; etaEl.style.background='#F9FAFB'; etaEl.style.color='#9CA3AF'; etaEl.style.border='1px solid #E5E7EB'; }
+  } else {
+    el.textContent = '✓';
+    el.style.background = '#0D9488';
+    el.style.border = '2px solid #0D9488';
+    el.style.color = '#fff';
+    document.getElementById(statusId).textContent = 'تم إرسال الدعوة ✓';
+    // Simulate acceptance after 1.5s
+    setTimeout(() => {
+      document.getElementById(statusId).textContent = 'قبل الدعوة — في الطريق ✓';
+      const etaEl = document.getElementById(name==='عبدالله' ? 'dad-eta' : 'gran-eta');
+      if(etaEl) {
+        etaEl.textContent = name==='عبدالله' ? '12 دقيقة' : '20 دقيقة';
+        etaEl.style.background = '#FEFCE8';
+        etaEl.style.color = '#A16207';
+        etaEl.style.border = 'none';
+      }
+    }, 1500);
+  }
+}
+
+</script>
+</body>
+</html>
