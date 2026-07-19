@@ -1,0 +1,551 @@
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Sparkles, Users, Wallet, Coffee, UtensilsCrossed, Mountain, Plane, Home, Gift, Wand2,
+  MapPin, Check, Copy, ArrowRight, Loader2, AlertCircle, RefreshCw
+} from "lucide-react";
+
+const COLORS = {
+  cream: "#FAF3EC",
+  card: "#FFFFFF",
+  ink: "#2B1F26",
+  inkSoft: "#7A6B72",
+  plum: "#6B3654",
+  plumDark: "#4E2540",
+  rose: "#C97B84",
+  roseSoft: "#F1DCDF",
+  lilac: "#EDE1E8",
+  sage: "#6E8B74",
+  sageSoft: "#E4ECE5",
+  gold: "#C9974B",
+};
+const FONT = "'Segoe UI', Tahoma, 'Geeza Pro', Arial, sans-serif";
+
+const OCCASIONS = [
+  { key: "cafe", label: "كافيه", icon: Coffee },
+  { key: "dinner", label: "عشاء", icon: UtensilsCrossed },
+  { key: "chalet", label: "شاليه", icon: Mountain },
+  { key: "trip", label: "رحلة", icon: Plane },
+  { key: "home", label: "بيت", icon: Home },
+  { key: "party", label: "مناسبة", icon: Gift },
+  { key: "activity", label: "تجربة جديدة", icon: Wand2 },
+];
+const OCC_LABEL = Object.fromEntries(OCCASIONS.map(o => [o.key, o.label]));
+
+const TASKS_BY_OCCASION = {
+  cafe: ["القهوة والمشروبات", "الحلا", "سبيكر / موسيقى", "الألعاب"],
+  dinner: ["حجز الطاولة", "الحلا بعد العشاء", "سبيكر / موسيقى", "التصوير"],
+  chalet: ["مستلزمات الشواء", "أدوات السباحة", "البطانيات والوسائد", "الألعاب الجماعية"],
+  trip: ["حجز الإقامة", "خطة المسار", "وجبات خفيفة للطريق", "إسعافات وشواحن"],
+  home: ["تجهيز المكان", "الأكل الرئيسي", "الحلا والمشروبات", "الألعاب"],
+  party: ["الكيك والحلا", "الديكور", "التصوير", "سبيكر / موسيقى"],
+  activity: ["حجز المدربة/الورشة", "ملابس مريحة", "مويه وسناكات", "التصوير"],
+};
+
+const FALLBACK_SUGGESTIONS = {
+  cafe: [
+    { name: "مقهى محلي هادئ", price: "٦٠–٩٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "كافيه بجلسات خارجية", price: "٧٠–١٠٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "بيت شاي أو حلا", price: "٥٠–٧٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+  ],
+  dinner: [
+    { name: "مطعم عائلي بقسم خاص", price: "١٢٠–١٥٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "مطعم مأكولات عالمية", price: "١٠٠–١٣٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "مطعم محلي بسيط", price: "٦٠–٩٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+  ],
+  chalet: [
+    { name: "شاليه بمسبح خاص", price: "٤٠٠–٦٠٠ ﷼ لليلة", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "استراحة عائلية", price: "٣٠٠–٤٥٠ ﷼ لليلة", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "شاليه اقتصادي قريب", price: "٢٠٠–٣٠٠ ﷼ لليلة", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+  ],
+  trip: [
+    { name: "رحلة جبلية قريبة", price: "٦٠٠–٨٥٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "رحلة تراثية", price: "٧٠٠–١١٠٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "رحلة ساحلية", price: "٥٠٠–٧٠٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+  ],
+  home: [
+    { name: "تجمّع بيتي بسيط", price: "توزيع تكاليف بينكم", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "سهرة بيتية بديكور خفيف", price: "توزيع تكاليف بينكم", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "فطور جماعي بالبيت", price: "توزيع تكاليف بينكم", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+  ],
+  party: [
+    { name: "قاعة صغيرة", price: "١٥٠–١٨٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "روفتوب مطل", price: "٢٥٠–٣٠٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "فيلا خاصة", price: "٢٠٠–٢٤٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+  ],
+  activity: [
+    { name: "جلسة يوغا", price: "١٥٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "ورشة رقص شرقي", price: "١٢٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+    { name: "ورشة رسم وشموع", price: "١٠٠ ﷼ للفرد", reason: "خيار افتراضي — عدّلي التفاصيل يدوياً إذا حبيتِ" },
+  ],
+};
+
+// In-memory fallback: used only if the cloud storage API fails, so the
+// demo still works locally on this device (won't sync to other visitors).
+const LOCAL_STORE = {};
+
+async function withRetry(fn, times = 2, delay = 500) {
+  let lastErr;
+  for (let i = 0; i < times; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      lastErr = e;
+      if (i < times - 1) await new Promise(r => setTimeout(r, delay));
+    }
+  }
+  throw lastErr;
+}
+
+function genCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let c = "";
+  for (let i = 0; i < 5; i++) c += chars[Math.floor(Math.random() * chars.length)];
+  return c;
+}
+
+function Btn({ children, onClick, variant = "primary", style, disabled }) {
+  const base = {
+    padding: "14px 20px", borderRadius: 16, border: "none", fontFamily: FONT, fontWeight: 700,
+    fontSize: 15, cursor: disabled ? "default" : "pointer", opacity: disabled ? 0.55 : 1,
+    display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "transform .1s",
+  };
+  const variants = {
+    primary: { background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.plumDark})`, color: "#fff", boxShadow: "0 8px 18px -8px rgba(107,54,84,0.5)" },
+    ghost: { background: "#fff", color: COLORS.plum, border: `1.5px solid ${COLORS.plum}` },
+    soft: { background: COLORS.lilac, color: COLORS.plum },
+  };
+  return <button onClick={disabled ? undefined : onClick} style={{ ...base, ...variants[variant], ...style }}>{children}</button>;
+}
+
+function Input({ value, onChange, placeholder, style }) {
+  return (
+    <input
+      value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
+      style={{
+        width: "100%", padding: "13px 16px", borderRadius: 14, border: "1.5px solid #EFE3EA",
+        fontFamily: FONT, fontSize: 15, textAlign: "right", boxSizing: "border-box", color: COLORS.ink,
+        outline: "none", ...style,
+      }}
+    />
+  );
+}
+
+function Card({ children, style }) {
+  return (
+    <div style={{ background: "#fff", borderRadius: 18, border: "1.5px solid #F1E6EC", padding: 18, ...style }}>
+      {children}
+    </div>
+  );
+}
+
+async function askClaude(prompt) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  const data = await res.json();
+  const textBlock = (data.content || []).find(b => b.type === "text");
+  if (!textBlock) throw new Error("empty response");
+  return textBlock.text;
+}
+
+function parseJsonLoose(text) {
+  const cleaned = text.replace(/```json|```/g, "").trim();
+  return JSON.parse(cleaned);
+}
+
+// ================= HOME =================
+function HomeScreen({ onCreate, onJoin }) {
+  const [code, setCode] = useState("");
+  const [name, setName] = useState("");
+  const [mode, setMode] = useState(null); // null | 'join'
+  return (
+    <div style={{ padding: 28, minHeight: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+      <div style={{ textAlign: "center", marginBottom: 34 }}>
+        <div style={{
+          width: 76, height: 76, borderRadius: 24, margin: "0 auto 16px",
+          background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: "0 14px 26px -10px rgba(107,54,84,0.5)",
+        }}>
+          <Sparkles color="#fff" size={34} />
+        </div>
+        <div style={{ fontSize: 30, fontWeight: 800, color: COLORS.plum }}>رفيقة</div>
+        <div style={{ fontSize: 13, color: COLORS.inkSoft, marginTop: 4 }}>خططي طلعتكم بضغطات — وشاركيها بكود بسيط</div>
+      </div>
+
+      {mode !== "join" ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <Btn onClick={onCreate}><Sparkles size={17} /> خططي طلعة جديدة</Btn>
+          <Btn variant="ghost" onClick={() => setMode("join")}>عندي كود طلعة</Btn>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <Input value={code} onChange={v => setCode(v.toUpperCase())} placeholder="اكتبي الكود (مثال: 7XQ2P)" style={{ textAlign: "center", fontSize: 20, fontWeight: 800, letterSpacing: 3 }} />
+          <Input value={name} onChange={setName} placeholder="اسمك (عشان صديقاتك يشوفنه)" />
+          <Btn onClick={() => onJoin(code.trim(), name.trim())} disabled={code.trim().length < 4 || !name.trim()}>ادخلي للطلعة <ArrowRight size={16} /></Btn>
+          <Btn variant="ghost" onClick={() => setMode(null)}>رجوع</Btn>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ================= CREATE =================
+function CreatePlan({ onCreated, onBack }) {
+  const [count, setCount] = useState(5);
+  const [budget, setBudget] = useState("متوسط");
+  const [occasion, setOccasion] = useState("cafe");
+  const [city, setCity] = useState("");
+  const [hostName, setHostName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const submit = async () => {
+    if (!hostName.trim()) { setError("اكتبي اسمك أول."); return; }
+    setError(""); setLoading(true);
+
+    let suggestions;
+    try {
+      const prompt = `أنتِ مساعد تخطيط اجتماعي لتطبيق "رفيقة" يساعد مجموعات صديقات سعوديات يخططن لطلعاتهن. بناءً على المعطيات التالية، اقترحي 3 خيارات واقعية ومناسبة (أماكن أو أنشطة حسب نوع المناسبة) تناسب السعودية. أعيدي الإجابة كـ JSON فقط بدون أي نص إضافي أو Markdown، بالشكل التالي بالضبط:
+[{"name":"...","price":"...","reason":"..."},{"name":"...","price":"...","reason":"..."},{"name":"...","price":"...","reason":"..."}]
+المعطيات:
+عدد الأشخاص: ${count}
+الميزانية: ${budget}
+نوع المناسبة: ${OCC_LABEL[occasion]}
+المدينة: ${city || "غير محددة، اقترحي بشكل عام"}`;
+      const raw = await askClaude(prompt);
+      const parsed = parseJsonLoose(raw);
+      if (!Array.isArray(parsed) || parsed.length === 0) throw new Error("bad-format");
+      suggestions = parsed;
+    } catch (e) {
+      suggestions = FALLBACK_SUGGESTIONS[occasion] || FALLBACK_SUGGESTIONS.cafe;
+    }
+
+    try {
+      if (!window.storage) throw new Error("no-storage-api");
+      const code = genCode();
+      const plan = {
+        code, hostName: hostName.trim(), count, budget, occasion, city,
+        suggestions, chosen: null, votes: {},
+        tasks: TASKS_BY_OCCASION[occasion].map(n => ({ name: n, by: null })),
+        createdAt: Date.now(), local: false,
+      };
+      try {
+        const result = await withRetry(() => window.storage.set(`plan:${code}`, JSON.stringify(plan), true));
+        if (!result) throw new Error("no-result");
+        onCreated(code, hostName.trim());
+      } catch (cloudErr) {
+        // Cloud storage backend hiccup — fall back to a local-only copy so the demo still works.
+        plan.local = true;
+        LOCAL_STORE[code] = plan;
+        onCreated(code, hostName.trim());
+      }
+    } catch (e) {
+      if (e.message === "no-storage-api") {
+        setError("ميزة الحفظ (window.storage) غير متاحة بهذا العارض. جربي فتح الملف من داخل تطبيق Claude مباشرة، مو من رابط خارجي أو معاينة ملف.");
+      } else {
+        setError(`تعذر حفظ الطلعة: ${e.message || "خطأ غير معروف"}. جربي مرة ثانية.`);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ padding: 22 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: COLORS.rose, marginBottom: 4 }}>طلعة جديدة</div>
+      <div style={{ fontSize: 22, fontWeight: 800, color: COLORS.ink, marginBottom: 20 }}>عطينا التفاصيل بسرعة</div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink, marginBottom: 8 }}>اسمك</div>
+          <Input value={hostName} onChange={setHostName} placeholder="مثال: سارة" />
+        </div>
+
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+            <Users size={15} color={COLORS.plum} /> كم بنت بالطلعة؟
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, background: "#fff", borderRadius: 14, padding: "8px 14px", border: "1.5px solid #EFE3EA" }}>
+            <button onClick={() => setCount(c => Math.max(2, c - 1))} style={{ width: 32, height: 32, borderRadius: 9, border: "none", background: COLORS.lilac, fontSize: 17, fontWeight: 800, color: COLORS.plum, cursor: "pointer" }}>−</button>
+            <div style={{ flex: 1, textAlign: "center", fontSize: 18, fontWeight: 800 }}>{count}</div>
+            <button onClick={() => setCount(c => Math.min(15, c + 1))} style={{ width: 32, height: 32, borderRadius: 9, border: "none", background: COLORS.plum, fontSize: 17, fontWeight: 800, color: "#fff", cursor: "pointer" }}>+</button>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+            <Wallet size={15} color={COLORS.plum} /> الميزانية
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {["اقتصادي", "متوسط", "مرتفع"].map(b => (
+              <button key={b} onClick={() => setBudget(b)} style={{
+                flex: 1, padding: "10px 6px", borderRadius: 12, cursor: "pointer", fontSize: 13, fontWeight: 700,
+                border: `1.5px solid ${budget === b ? COLORS.plum : "#EFE3EA"}`, background: budget === b ? COLORS.plum : "#fff",
+                color: budget === b ? "#fff" : COLORS.ink,
+              }}>{b}</button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink, marginBottom: 8 }}>نوع المناسبة</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+            {OCCASIONS.map(o => {
+              const Icon = o.icon;
+              const active = occasion === o.key;
+              return (
+                <button key={o.key} onClick={() => setOccasion(o.key)} style={{
+                  padding: "12px 4px", borderRadius: 14, border: `1.5px solid ${active ? COLORS.plum : "#EFE3EA"}`,
+                  background: active ? COLORS.lilac : "#fff", display: "flex", flexDirection: "column", alignItems: "center", gap: 5, cursor: "pointer",
+                }}>
+                  <Icon size={18} color={active ? COLORS.plum : COLORS.inkSoft} />
+                  <span style={{ fontSize: 11.5, fontWeight: 700, color: active ? COLORS.plum : COLORS.ink }}>{o.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink, marginBottom: 8 }}>المدينة (اختياري)</div>
+          <Input value={city} onChange={setCity} placeholder="مثال: الرياض" />
+        </div>
+
+        {error && (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#B5484D", fontSize: 12.5 }}>
+            <AlertCircle size={14} /> {error}
+          </div>
+        )}
+
+        <Btn onClick={submit} disabled={loading}>
+          {loading ? <><Loader2 size={17} className="spin" /> يفكر بأفضل الاقتراحات...</> : <><Sparkles size={17} /> ولّدي الاقتراحات</>}
+        </Btn>
+        <Btn variant="ghost" onClick={onBack} disabled={loading}>رجوع</Btn>
+      </div>
+    </div>
+  );
+}
+
+// ================= PLAN VIEW =================
+function PlanView({ code, myName, onLeave }) {
+  const [plan, setPlan] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+  const pollRef = useRef(null);
+
+  const load = async () => {
+    try {
+      if (!window.storage) throw new Error("no-storage");
+      const res = await window.storage.get(`plan:${code}`, true);
+      if (res && res.value) { setPlan(JSON.parse(res.value)); setError(""); return; }
+      throw new Error("not-found");
+    } catch (e) {
+      if (LOCAL_STORE[code]) { setPlan(LOCAL_STORE[code]); setError(""); return; }
+      setError("ما لقينا هذي الطلعة. تأكدي من الكود.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+    pollRef.current = setInterval(load, 4000); // light polling so friends see live updates
+    return () => clearInterval(pollRef.current);
+    // eslint-disable-next-line
+  }, [code]);
+
+  const save = async (updated) => {
+    setPlan(updated);
+    if (updated.local) {
+      LOCAL_STORE[code] = updated;
+      return;
+    }
+    try {
+      await withRetry(() => window.storage.set(`plan:${code}`, JSON.stringify(updated), true));
+    } catch (e) {
+      const fallback = { ...updated, local: true };
+      LOCAL_STORE[code] = fallback;
+      setPlan(fallback);
+      setError("⚠️ التخزين السحابي توقف أثناء التحديث — كملنا محلياً على جهازك بس.");
+    }
+  };
+
+  const vote = (idx) => {
+    if (!plan) return;
+    const votes = { ...plan.votes, [myName]: idx };
+    save({ ...plan, votes });
+  };
+
+  const chooseOption = (idx) => {
+    if (!plan) return;
+    save({ ...plan, chosen: idx });
+  };
+
+  const claimTask = (i) => {
+    if (!plan) return;
+    const tasks = plan.tasks.map((t, idx) => idx === i ? { ...t, by: t.by === myName ? null : myName } : t);
+    save({ ...plan, tasks });
+  };
+
+  const copyCode = () => {
+    const ta = document.createElement("textarea");
+    ta.value = code; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+    setCopied(true); setTimeout(() => setCopied(false), 1500);
+  };
+
+  if (loading) {
+    return <div style={{ padding: 40, textAlign: "center", color: COLORS.inkSoft }}>يفتح الطلعة...</div>;
+  }
+  if (error && !plan) {
+    return (
+      <div style={{ padding: 28, textAlign: "center" }}>
+        <AlertCircle size={26} color={COLORS.rose} style={{ marginBottom: 10 }} />
+        <div style={{ color: COLORS.ink, fontWeight: 700, marginBottom: 14 }}>{error}</div>
+        <Btn variant="ghost" onClick={onLeave}>رجوع للبداية</Btn>
+      </div>
+    );
+  }
+  if (!plan) return null;
+
+  const voteCounts = plan.suggestions.map((_, i) => Object.values(plan.votes).filter(v => v === i).length);
+  const totalVotes = Object.keys(plan.votes).length;
+  const myVote = plan.votes[myName];
+  const palette = [COLORS.plum, COLORS.rose, COLORS.gold];
+
+  return (
+    <div style={{ padding: 18 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <button onClick={onLeave} style={{ background: "none", border: "none", color: COLORS.inkSoft, fontSize: 12, cursor: "pointer", fontFamily: FONT }}>خروج</button>
+        <button onClick={copyCode} style={{
+          display: "flex", alignItems: "center", gap: 6, background: COLORS.lilac, border: "none",
+          borderRadius: 999, padding: "6px 14px", cursor: "pointer", fontFamily: FONT,
+        }}>
+          <span style={{ fontWeight: 800, color: COLORS.plum, letterSpacing: 2, fontSize: 13 }}>{code}</span>
+          {copied ? <Check size={13} color={COLORS.sage} /> : <Copy size={13} color={COLORS.plum} />}
+        </button>
+      </div>
+
+      <div style={{ fontSize: 12, color: COLORS.inkSoft, marginBottom: 2 }}>طلعة {plan.hostName} · {OCC_LABEL[plan.occasion]}</div>
+      <div style={{ fontSize: 19, fontWeight: 800, color: COLORS.ink, marginBottom: 16 }}>شاركي الكود مع صديقاتك عشان يصوّتن معك</div>
+
+      {plan.local && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: 8, background: "#FBF3E4", border: "1.5px solid #EAD9B0",
+          borderRadius: 12, padding: "10px 12px", marginBottom: 16, fontSize: 12, fontWeight: 600, color: "#8A6A2A",
+        }}>
+          <AlertCircle size={15} /> وضع محلي: التخزين السحابي غير متاح حالياً، فهذي النسخة تشتغل على جهازك بس ولن تظهر التحديثات عند صديقاتك حتى يُحل الأمر.
+        </div>
+      )}
+
+      <div style={{ fontSize: 12.5, fontWeight: 700, color: COLORS.inkSoft, marginBottom: 8 }}>الاقتراحات ({totalVotes} صوّتت)</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 22 }}>
+        {plan.suggestions.map((s, i) => (
+          <Card key={i} style={{ border: `2px solid ${plan.chosen === i ? COLORS.sage : (myVote === i ? COLORS.plum : "#F1E6EC")}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: COLORS.ink }}>{s.name}</div>
+                <div style={{ fontSize: 12, color: COLORS.inkSoft, marginTop: 2 }}>{s.price}</div>
+              </div>
+              {plan.chosen === i && <span style={{ fontSize: 11, fontWeight: 800, color: COLORS.sage, background: COLORS.sageSoft, padding: "4px 10px", borderRadius: 999 }}>مُختارة ✓</span>}
+            </div>
+            <div style={{ fontSize: 11.5, color: palette[i % 3], background: `${palette[i % 3]}15`, padding: "5px 10px", borderRadius: 9, display: "inline-block", marginBottom: 10 }}>
+              ✨ {s.reason}
+            </div>
+            <div style={{ height: 8, borderRadius: 6, background: "#F1E6EC", overflow: "hidden", marginBottom: 10 }}>
+              <div style={{ width: totalVotes ? `${(voteCounts[i] / totalVotes) * 100}%` : "0%", height: "100%", background: palette[i % 3], transition: "width .4s" }} />
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <Btn variant={myVote === i ? "primary" : "soft"} onClick={() => vote(i)} style={{ flex: 1, padding: "9px 10px", fontSize: 12.5 }}>
+                {myVote === i ? "صوّتِ لهذا ✓" : `صوّتي (${voteCounts[i]})`}
+              </Btn>
+              <Btn variant="ghost" onClick={() => chooseOption(i)} style={{ padding: "9px 10px", fontSize: 12.5 }}>اخترنا هذا</Btn>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div style={{ fontSize: 12.5, fontWeight: 700, color: COLORS.inkSoft, marginBottom: 8 }}>توزيع المهام</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {plan.tasks.map((t, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", borderRadius: 14, padding: "11px 14px", border: "1.5px solid #F1E6EC" }}>
+            <span style={{ fontSize: 13.5, fontWeight: 600, color: COLORS.ink }}>{t.name}</span>
+            <button onClick={() => claimTask(i)} style={{
+              fontSize: 11.5, fontWeight: 800, border: "none", borderRadius: 999, padding: "6px 12px", cursor: "pointer",
+              background: t.by ? (t.by === myName ? COLORS.plum : COLORS.sageSoft) : COLORS.lilac,
+              color: t.by ? (t.by === myName ? "#fff" : COLORS.sage) : COLORS.plum,
+            }}>
+              {t.by ? (t.by === myName ? "أنا بجيبه ✓" : t.by) : "بجيبه أنا"}
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginTop: 20, textAlign: "center" }}>
+        <button onClick={load} style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none", color: COLORS.inkSoft, fontSize: 11.5, cursor: "pointer", fontFamily: FONT }}>
+          <RefreshCw size={12} /> تحديث الآن
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ================= APP =================
+export default function App() {
+  const [screen, setScreen] = useState("home"); // home | create | plan
+  const [code, setCode] = useState("");
+  const [myName, setMyName] = useState("");
+  const [joinError, setJoinError] = useState("");
+
+  const handleJoin = async (c, name) => {
+    if (!c || !name) return;
+    setJoinError("");
+    try {
+      if (!window.storage) throw new Error("no-storage");
+      const res = await window.storage.get(`plan:${c}`, true);
+      if (!res || !res.value) throw new Error("not-found");
+      setCode(c); setMyName(name); setScreen("plan");
+    } catch (e) {
+      if (LOCAL_STORE[c]) {
+        setCode(c); setMyName(name); setScreen("plan");
+      } else {
+        setJoinError("ما فيه طلعة بهذا الكود.");
+      }
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: "100vh", background: `linear-gradient(160deg, #F6EEF2, ${COLORS.cream} 40%)`,
+      display: "flex", alignItems: "center", justifyContent: "center", padding: 20, fontFamily: FONT, direction: "rtl",
+    }}>
+      <style>{`.spin { animation: spin 1s linear infinite; } @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <div style={{ width: 400, maxWidth: "100%", background: COLORS.cream, borderRadius: 28, minHeight: 560, boxShadow: "0 30px 60px -20px rgba(75,30,55,0.25)", overflow: "hidden" }}>
+        {screen === "home" && (
+          <>
+            <HomeScreen onCreate={() => setScreen("create")} onJoin={handleJoin} />
+            {joinError && <div style={{ textAlign: "center", color: "#B5484D", fontSize: 12.5, paddingBottom: 16 }}>{joinError}</div>}
+          </>
+        )}
+        {screen === "create" && (
+          <CreatePlan
+            onBack={() => setScreen("home")}
+            onCreated={(c, name) => { setCode(c); setMyName(name); setScreen("plan"); }}
+          />
+        )}
+        {screen === "plan" && (
+          <PlanView code={code} myName={myName} onLeave={() => setScreen("home")} />
+        )}
+      </div>
+    </div>
+  );
+}
